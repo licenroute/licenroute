@@ -1,0 +1,2 @@
+gem "rails", "~> 8.0"
+gem "botgate-connect", path: "../botgate/sdks/ruby-rails"

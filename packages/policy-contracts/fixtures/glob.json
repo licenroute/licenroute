@@ -1,0 +1,28 @@
+{
+  "description": "matchGlob(compileGlob(pattern), normalizePath(path)) === match.",
+  "cases": [
+    { "pattern": "/", "path": "/", "match": true },
+    { "pattern": "/", "path": "/a", "match": false },
+    { "pattern": "/**", "path": "/", "match": true },
+    { "pattern": "/**", "path": "/a/b/c", "match": true },
+    { "pattern": "/login", "path": "/login", "match": true },
+    { "pattern": "/login", "path": "/LOGIN/", "match": true },
+    { "pattern": "/login", "path": "/login/extra", "match": false },
+    { "pattern": "/api/**", "path": "/api", "match": true },
+    { "pattern": "/api/**", "path": "/api/items/1", "match": true },
+    { "pattern": "/api/**", "path": "/apix", "match": false },
+    { "pattern": "/api/*", "path": "/api/items", "match": true },
+    { "pattern": "/api/*", "path": "/api/items/1", "match": false },
+    { "pattern": "/api/*", "path": "/api", "match": false },
+    { "pattern": "/api/*/items", "path": "/api/v2/items", "match": true },
+    { "pattern": "/static/*.css", "path": "/static/app.css", "match": true },
+    { "pattern": "/static/*.css", "path": "/static/app.js", "match": false },
+    { "pattern": "/a/**/z", "path": "/a/z", "match": true },
+    { "pattern": "/a/**/z", "path": "/a/b/c/z", "match": true },
+    { "pattern": "/a/**/z", "path": "/a/b/c/y", "match": false },
+    { "pattern": "/health*", "path": "/healthz", "match": true },
+    { "pattern": "/health*/**", "path": "/health/live", "match": true },
+    { "pattern": "/admin/**", "path": "/public/../ADMIN%2fusers", "match": true, "note": "bypass combinado" },
+    { "pattern": "/users/:id", "path": "/users/:id", "match": true, "note": ":id es literal, no parámetro" }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "sub",
+  "dependencies": {
+    "express": "^5.0.0"
+  }
+}

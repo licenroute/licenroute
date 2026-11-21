@@ -1,0 +1,33 @@
+{
+  "$comment": "Generado por LicenRoute (perfil del repositorio público): no edites este fichero. Fusiona estas claves en .claude/settings.json del proyecto (las listas se combinan).",
+  "permissions": {
+    "ask": [
+      "Bash(*licenroute* apply * --approve *)",
+      "Bash(*licenroute* undo * --resolve *)",
+      "Bash(*licenroute* init * --write*)",
+      "Bash(*licenroute* assistant * --approve *)",
+      "Bash(*licenroute* dev * --start-app*)"
+    ],
+    "deny": [
+      "Bash(*LICENROUTE_APPROVAL=host-gated*)",
+      "Bash(*LICENROUTE_APPROVAL=insecure-test*)",
+      "Bash(*LICENROUTE_INSECURE_TEST*)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/.env.licenroute)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/licenroute-guard.mjs\" claude es"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,495 @@
+{
+ "description": "BL-11 (Fase 8): fallback efectivo cuando la Decision API no da una decisión. `policy`: null (nunca descargada o corrupta) o política verificada; `trusted: false` = caducada. `unsafe_config` se deriva: la política tiene rutas de pago que local_licensed no cubre y without_policy no es deny. `covers`: si la declaración local cubre un patrón licenciado (comparación conservadora). Compartido por los SDK de Express y Rails.",
+ "cases": [
+  {
+   "name": "primera instalación, API caída: ruta de pago declarada, SIN token -> cerrada",
+   "local_licensed": [
+    "/datos/**"
+   ],
+   "without_policy": "fallback",
+   "policy": null,
+   "route_fallbacks": {},
+   "fallback": "fail_open",
+   "request": {
+    "method": "GET",
+    "path": "/datos/1",
+    "token": false
+   },
+   "expect": {
+    "fallback": "fail_closed",
+    "reason": "licensed_local"
+   }
+  },
+  {
+   "name": "primera instalación: ruta de pago declarada, con token -> cerrada",
+   "local_licensed": [
+    "/datos/**"
+   ],
+   "without_policy": "fallback",
+   "policy": null,
+   "route_fallbacks": {},
+   "fallback": "fail_open",
+   "request": {
+    "method": "GET",
+    "path": "/datos/1",
+    "token": true
+   },
+   "expect": {
+    "fallback": "fail_closed",
+    "reason": "licensed_local"
+   }
+  },
+  {
+   "name": "primera instalación: ruta libre con fail_open -> abierta",
+   "local_licensed": [
+    "/datos/**"
+   ],
+   "without_policy": "fallback",
+   "policy": null,
+   "route_fallbacks": {},
+   "fallback": "fail_open",
+   "request": {
+    "method": "GET",
+    "path": "/catalogo",
+    "token": false
+   },
+   "expect": {
+    "fallback": "fail_open",
+    "reason": "global_fallback"
+   }
+  },
+  {
+   "name": "primera instalación: token en ruta no declarada -> cerrada (nunca gratis algo que dice ser de pago)",
+   "local_licensed": [],
+   "without_policy": "fallback",
+   "policy": null,
+   "route_fallbacks": {},
+   "fallback": "fail_open",
+   "request": {
+    "method": "GET",
+    "path": "/otra",
+    "token": true
+   },
+   "expect": {
+    "fallback": "fail_closed",
+    "reason": "no_policy_token"
+   }
+  },
+  {
+   "name": "primera instalación, modo estricto: ruta libre -> cerrada",
+   "local_licensed": [],
+   "without_policy": "deny",
+   "policy": null,
+   "route_fallbacks": {},
+   "fallback": "fail_open",
+   "request": {
+    "method": "GET",
+    "path": "/catalogo",
+    "token": false
+   },
+   "expect": {
+    "fallback": "fail_closed",
+    "reason": "no_policy_strict"
+   }
+  },
+  {
+   "name": "política confiable con ruta de pago no declarada en local -> cerrada",
+   "local_licensed": [
+    "/datos/**"
+   ],
+   "without_policy": "fallback",
+   "policy": {
+    "trusted": true,
+    "licensed_routes": [
+     {
+      "route_pattern": "/informes/**",
+      "methods": []
+     }
+    ],
+    "rules": [],
+    "default_fallback": "fail_open"
+   },
+   "route_fallbacks": {},
+   "fallback": "fail_open",
+   "request": {
+    "method": "GET",
+    "path": "/informes/2",
+    "token": false
+   },
+   "expect": {
+    "fallback": "fail_closed",
+    "reason": "licensed_policy"
+   }
+  },
+  {
+   "name": "ruta de pago de la política solo para POST: GET no se cierra por ella",
+   "local_licensed": [
+    "/datos/**"
+   ],
+   "without_policy": "fallback",
+   "policy": {
+    "trusted": true,
+    "licensed_routes": [
+     {
+      "route_pattern": "/informes/**",
+      "methods": [
+       "POST"
+      ]
+     }
+    ],
+    "rules": [],
+    "default_fallback": "fail_open"
+   },
+   "route_fallbacks": {},
+   "fallback": "fail_open",
+   "request": {
+    "method": "GET",
+    "path": "/informes/2",
+    "token": false
+   },
+   "expect": {
+    "fallback": "fail_open",
+    "reason": "global_fallback"
+   }
+  },
+  {
+   "name": "política CADUCADA: sus rutas de pago siguen cerradas",
+   "local_licensed": [
+    "/datos/**"
+   ],
+   "without_policy": "fallback",
+   "policy": {
+    "trusted": false,
+    "licensed_routes": [
+     {
+      "route_pattern": "/informes/**",
+      "methods": []
+     }
+    ],
+    "rules": [],
+    "default_fallback": "fail_open"
+   },
+   "route_fallbacks": {},
+   "fallback": "fail_open",
+   "request": {
+    "method": "GET",
+    "path": "/informes/2",
+    "token": false
+   },
+   "expect": {
+    "fallback": "fail_closed",
+    "reason": "licensed_policy"
+   }
+  },
+  {
+   "name": "política caducada con rutas de pago no declaradas: configuración insegura -> rutas libres cerradas",
+   "local_licensed": [
+    "/datos/**"
+   ],
+   "without_policy": "fallback",
+   "policy": {
+    "trusted": false,
+    "licensed_routes": [
+     {
+      "route_pattern": "/informes/**",
+      "methods": []
+     }
+    ],
+    "rules": [],
+    "default_fallback": "fail_open"
+   },
+   "route_fallbacks": {},
+   "fallback": "fail_open",
+   "request": {
+    "method": "GET",
+    "path": "/catalogo",
+    "token": false
+   },
+   "expect": {
+    "fallback": "fail_closed",
+    "reason": "no_policy_unsafe_config"
+   }
+  },
+  {
+   "name": "política caducada, todas sus rutas de pago declaradas: ruta libre con su fallback",
+   "local_licensed": [
+    "/datos/**",
+    "/informes/**"
+   ],
+   "without_policy": "fallback",
+   "policy": {
+    "trusted": false,
+    "licensed_routes": [
+     {
+      "route_pattern": "/informes/**",
+      "methods": []
+     }
+    ],
+    "rules": [],
+    "default_fallback": "fail_open"
+   },
+   "route_fallbacks": {},
+   "fallback": "fail_open",
+   "request": {
+    "method": "GET",
+    "path": "/catalogo",
+    "token": false
+   },
+   "expect": {
+    "fallback": "fail_open",
+    "reason": "global_fallback"
+   }
+  },
+  {
+   "name": "política caducada: sus reglas fail_open ya no se aplican",
+   "local_licensed": [
+    "/datos/**"
+   ],
+   "without_policy": "fallback",
+   "policy": {
+    "trusted": false,
+    "licensed_routes": [],
+    "rules": [
+     {
+      "path_pattern": "/api/**",
+      "methods": [],
+      "priority": 1,
+      "fallback": "fail_open"
+     }
+    ],
+    "default_fallback": "fail_open"
+   },
+   "route_fallbacks": {
+    "/api/**": "deny"
+   },
+   "fallback": null,
+   "request": {
+    "method": "GET",
+    "path": "/api/x",
+    "token": false
+   },
+   "expect": {
+    "fallback": "fail_closed",
+    "reason": "route_fallback"
+   }
+  },
+  {
+   "name": "política confiable: fallback de la regla",
+   "local_licensed": [
+    "/datos/**"
+   ],
+   "without_policy": "fallback",
+   "policy": {
+    "trusted": true,
+    "licensed_routes": [],
+    "rules": [
+     {
+      "path_pattern": "/login",
+      "methods": [],
+      "priority": 1,
+      "fallback": "fail_closed"
+     }
+    ],
+    "default_fallback": "fail_open"
+   },
+   "route_fallbacks": {},
+   "fallback": "fail_open",
+   "request": {
+    "method": "GET",
+    "path": "/login",
+    "token": false
+   },
+   "expect": {
+    "fallback": "fail_closed",
+    "reason": "policy_rule"
+   }
+  },
+  {
+   "name": "política confiable: la regla no puede abrir una ruta de pago declarada",
+   "local_licensed": [
+    "/datos/**"
+   ],
+   "without_policy": "fallback",
+   "policy": {
+    "trusted": true,
+    "licensed_routes": [],
+    "rules": [
+     {
+      "path_pattern": "/datos/**",
+      "methods": [],
+      "priority": 1,
+      "fallback": "fail_open"
+     }
+    ],
+    "default_fallback": "fail_open"
+   },
+   "route_fallbacks": {},
+   "fallback": "fail_open",
+   "request": {
+    "method": "GET",
+    "path": "/datos/1",
+    "token": false
+   },
+   "expect": {
+    "fallback": "fail_closed",
+    "reason": "licensed_local"
+   }
+  },
+  {
+   "name": "routeFallbacks local",
+   "local_licensed": [
+    "/datos/**"
+   ],
+   "without_policy": "fallback",
+   "policy": null,
+   "route_fallbacks": {
+    "/login": "deny"
+   },
+   "fallback": "fail_open",
+   "request": {
+    "method": "POST",
+    "path": "/login",
+    "token": false
+   },
+   "expect": {
+    "fallback": "fail_closed",
+    "reason": "route_fallback"
+   }
+  },
+  {
+   "name": "fallback por defecto de la política confiable",
+   "local_licensed": [
+    "/datos/**"
+   ],
+   "without_policy": "fallback",
+   "policy": {
+    "trusted": true,
+    "licensed_routes": [],
+    "rules": [],
+    "default_fallback": "fail_closed"
+   },
+   "route_fallbacks": {},
+   "fallback": null,
+   "request": {
+    "method": "GET",
+    "path": "/catalogo",
+    "token": false
+   },
+   "expect": {
+    "fallback": "fail_closed",
+    "reason": "policy_default"
+   }
+  },
+  {
+   "name": "sin política ni opciones -> fail_open",
+   "local_licensed": [
+    "/datos/**"
+   ],
+   "without_policy": "fallback",
+   "policy": null,
+   "route_fallbacks": {},
+   "fallback": null,
+   "request": {
+    "method": "GET",
+    "path": "/catalogo",
+    "token": false
+   },
+   "expect": {
+    "fallback": "fail_open",
+    "reason": "default"
+   }
+  },
+  {
+   "name": "modo estricto no afecta con política confiable",
+   "local_licensed": [
+    "/datos/**"
+   ],
+   "without_policy": "deny",
+   "policy": {
+    "trusted": true,
+    "licensed_routes": [
+     {
+      "route_pattern": "/datos/**",
+      "methods": []
+     }
+    ],
+    "rules": [],
+    "default_fallback": "fail_open"
+   },
+   "route_fallbacks": {},
+   "fallback": "fail_open",
+   "request": {
+    "method": "GET",
+    "path": "/catalogo",
+    "token": false
+   },
+   "expect": {
+    "fallback": "fail_open",
+    "reason": "global_fallback"
+   }
+  }
+ ],
+ "covers": [
+  {
+   "local": [
+    "/datos/**"
+   ],
+   "pattern": "/datos/**",
+   "expect": true
+  },
+  {
+   "local": [
+    "/datos/**"
+   ],
+   "pattern": "/datos/premium/**",
+   "expect": true
+  },
+  {
+   "local": [
+    "/datos/**"
+   ],
+   "pattern": "/datos",
+   "expect": true
+  },
+  {
+   "local": [
+    "/DATOS/**"
+   ],
+   "pattern": "/datos/**",
+   "expect": true
+  },
+  {
+   "local": [
+    "/datos/**"
+   ],
+   "pattern": "/informes/**",
+   "expect": false
+  },
+  {
+   "local": [
+    "/datos/*"
+   ],
+   "pattern": "/datos/**",
+   "expect": false
+  },
+  {
+   "local": [
+    "/*/**"
+   ],
+   "pattern": "/datos/**",
+   "expect": false
+  },
+  {
+   "local": [
+    "/datos/premium/**"
+   ],
+   "pattern": "/datos/**",
+   "expect": false
+  },
+  {
+   "local": [],
+   "pattern": "/datos/**",
+   "expect": false
+  }
+ ]
+}

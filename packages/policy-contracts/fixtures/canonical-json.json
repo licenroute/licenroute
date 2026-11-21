@@ -1,0 +1,67 @@
+{
+  "description": "Contrato del JSON canónico (Ruby: Botgate::CanonicalJson, Node: canonicalJson). Generado con una tercera implementación (Python json.dumps sort_keys, separators, ensure_ascii=False).",
+  "cases": [
+    {
+      "input": {
+        "z": 1,
+        "a": {
+          "y": [
+            3,
+            {
+              "b": true,
+              "a": null
+            }
+          ],
+          "x": "texto"
+        }
+      },
+      "canonical": "{\"a\":{\"x\":\"texto\",\"y\":[3,{\"a\":null,\"b\":true}]},\"z\":1}",
+      "sha256": "897c2dfb1eeff847c542061322cdae243b23d31db5b5f4d4316c9f4a9b3fe801"
+    },
+    {
+      "input": {
+        "site_id": "site_demo",
+        "rules": [],
+        "version": 7,
+        "defaults": {
+          "fallback": "fail_open"
+        }
+      },
+      "canonical": "{\"defaults\":{\"fallback\":\"fail_open\"},\"rules\":[],\"site_id\":\"site_demo\",\"version\":7}",
+      "sha256": "0a8a881fd0b3178215c025f8bc998e685ae4fbe035dcde4e7867ea36c60498c3"
+    },
+    {
+      "input": {
+        "unicode": "ñandú — ü 日本 😀",
+        "quote": "a\"b\\c",
+        "slash": "/api/**"
+      },
+      "canonical": "{\"quote\":\"a\\\"b\\\\c\",\"slash\":\"/api/**\",\"unicode\":\"ñandú — ü 日本 😀\"}",
+      "sha256": "9120569afa428dd565be0e65be9ca2019313ebd87ec45dafdd2c491426dc15a2"
+    },
+    {
+      "input": {
+        "control": "line\nbreak\ttab\u0001\u001f",
+        "ls": "  "
+      },
+      "canonical": "{\"control\":\"line\\nbreak\\ttab\\u0001\\u001f\",\"ls\":\"  \"}",
+      "sha256": "3ef35c60e3d656283fb59f6154610e3ba0bd5a5cbc6d4c00dea844c4f54ba880"
+    },
+    {
+      "input": {
+        "nested": [
+          [],
+          {},
+          [
+            {}
+          ],
+          0,
+          -5,
+          9007199254740991
+        ]
+      },
+      "canonical": "{\"nested\":[[],{},[{}],0,-5,9007199254740991]}",
+      "sha256": "fdebf32528823526fa3c02ba712bab65ee819548c713578a85b1429fba11f313"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "@licenroute/simulator",
+  "version": "0.1.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "description": "Simulador local de decisiones de LicenRoute para el modo demo (S10.1). NO productivo: solo loopback, credenciales propias (bg_dev_, site_dev_, bgdev_) y respuestas marcadas como simulación.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@licenroute/policy-contracts": "0.2.0"
+  }
+}

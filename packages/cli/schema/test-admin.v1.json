@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "botgate.test-admin/v1",
+  "title": "Administración de pruebas para licenroute test",
+  "description": "Lo que licenroute test necesita del servicio de decisiones. Repositorio público (L6): un solo proveedor, demo (simulador en loopback, resultados SIMULATED: comprueban la integración, nunca certifican Central); BOTGATE_TEST_PROVIDER solo admite demo. Ningún resultado incluye tokens salvo license, que nunca se imprime.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "providers", "operations", "results"],
+  "properties": {
+    "contract": { "const": "botgate.test-admin/v1" },
+    "providers": {
+      "const": {
+        "demo": { "verification": "simulated", "backend": "simulador botgate.simulator/v1 en http://127.0.0.1:<puerto>; LICENROUTE_DEMO_ADMIN_URL y LICENROUTE_DEMO_ADMIN_TOKEN (bgdevadmin_…)" }
+      }
+    },
+    "operations": {
+      "const": [
+        "siteStatus(app) → { plans: [{ pattern, state: active|pending, quota }], attestations: [{ sdk, freshness, mode, paths }] }",
+        "activate(app) → [{ pattern, state: activated|already_active|not_attested }]",
+        "issueLicenses(app) → null   (por plan: <clave>, <clave>-revocable, <clave>-cuota)",
+        "license(app, name) → token   (nunca se imprime)",
+        "revoke(app, name) → null",
+        "outage(on|off) → null   (caída del servicio de decisiones y vuelta)",
+        "forgedToken() → licencia con el formato del servicio que no existe"
+      ]
+    },
+    "results": {
+      "const": {
+        "AdminResult": "{ ok: true, value } | { ok: false, error: { code: unavailable|unsupported|license_missing|invalid|refused, message } }",
+        "licenroute.cli.test/v1 (campos añadidos)": "result: verified_pass|simulated_pass|fail · test_admin: { contract, provider, verification } · checks[].result: verified_pass|simulated_pass|fail|info"
+      }
+    }
+  }
+}

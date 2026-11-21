@@ -1,0 +1,5 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": { "rootDir": "../..", "allowImportingTsExtensions": true, "rewriteRelativeImportExtensions": true, "noEmit": true },
+  "include": ["src", "test", "vitest.config.ts"]
+}

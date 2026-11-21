@@ -1,0 +1,8 @@
+node_modules/
+.pack/
+dist/
+dist-packages/
+validation-results/
+*.tgz
+.env*
+.licenroute/

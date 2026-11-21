@@ -1,0 +1,13 @@
+{
+  "description": "Extracción del token de comprador en los SDK (Fase 5). headers -> access_token reenviado a la Decision API (null = no se envía) y si la cabecera llega a la app. Solo se reenvían tokens bgat_ válidos; nunca otra credencial de la app.",
+  "token": "bgat_abcdefgh_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "cases": [
+    { "name": "sin cabeceras", "headers": {}, "forwarded": null, "app_sees": {} },
+    { "name": "BotGate-Access-Token válido", "headers": { "botgate-access-token": "bgat_abcdefgh_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" }, "forwarded": "bgat_abcdefgh_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "app_sees": { "botgate-access-token": null } },
+    { "name": "Authorization Bearer bgat_ válido", "headers": { "authorization": "Bearer bgat_abcdefgh_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" }, "forwarded": "bgat_abcdefgh_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "app_sees": { "authorization": null } },
+    { "name": "Authorization de la app (no bgat_) no se reenvía ni se toca", "headers": { "authorization": "Bearer TOKEN-DE-LA-APP" }, "forwarded": null, "app_sees": { "authorization": "Bearer TOKEN-DE-LA-APP" } },
+    { "name": "Basic auth de la app no se toca", "headers": { "authorization": "Basic dXNlcjpwYXNz" }, "forwarded": null, "app_sees": { "authorization": "Basic dXNlcjpwYXNz" } },
+    { "name": "bgat_ mal formado no se reenvía", "headers": { "botgate-access-token": "bgat_corto" }, "forwarded": null, "app_sees": { "botgate-access-token": null } },
+    { "name": "cabecera explícita tiene prioridad y la Authorization de la app se conserva", "headers": { "botgate-access-token": "bgat_abcdefgh_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "authorization": "Bearer TOKEN-DE-LA-APP" }, "forwarded": "bgat_abcdefgh_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "app_sees": { "botgate-access-token": null, "authorization": "Bearer TOKEN-DE-LA-APP" } }
+  ]
+}

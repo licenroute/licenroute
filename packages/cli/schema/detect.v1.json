@@ -1,0 +1,536 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:licenroute:cli:detect:v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "tool",
+    "frameworks",
+    "licenroute",
+    "routes",
+    "unresolved",
+    "skipped",
+    "notes",
+    "completeness",
+    "files"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "licenroute.cli.detect/v1"
+    },
+    "tool": {
+      "type": "object",
+      "required": [
+        "name",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "const": "@licenroute/cli"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "frameworks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "version",
+          "major",
+          "supported",
+          "language",
+          "entry_files"
+        ],
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "express"
+              },
+              {
+                "type": "string",
+                "const": "rails"
+              }
+            ]
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "major": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "supported": {
+            "type": "boolean",
+            "description": "Express 4/5 o Rails 7/8."
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "javascript"
+              },
+              {
+                "type": "string",
+                "const": "typescript"
+              },
+              {
+                "type": "string",
+                "const": "ruby"
+              }
+            ]
+          },
+          "api_only": {
+            "type": "boolean"
+          },
+          "entry_files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Ficheros donde se crea la app (Express) o se definen las rutas (Rails)."
+          }
+        }
+      }
+    },
+    "licenroute": {
+      "type": "object",
+      "required": [
+        "present",
+        "sdk",
+        "locations",
+        "licensed_paths"
+      ],
+      "properties": {
+        "present": {
+          "type": "boolean"
+        },
+        "sdk": {
+          "anyOf": [
+            {
+              "type": "string",
+              "const": "express"
+            },
+            {
+              "type": "string",
+              "const": "rails"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "locations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "file",
+              "line"
+            ],
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "line": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        },
+        "licensed_paths": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Si se pudieron leer como literales; null si no."
+        },
+        "licensed_routes": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "pattern",
+                  "methods"
+                ],
+                "properties": {
+                  "pattern": {
+                    "type": "string"
+                  },
+                  "methods": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Métodos que exigen licencia; vacío = todos (entrada antigua, una cadena)."
+                  }
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "D4.1: licensedPaths con sus métodos ({ path, methods }), si se pudieron leer como literales."
+        }
+      }
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "method",
+          "path",
+          "source",
+          "resolution",
+          "category",
+          "framework",
+          "signals",
+          "notes"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^r_[0-9a-f]{12}$"
+          },
+          "method": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "GET"
+              },
+              {
+                "type": "string",
+                "const": "HEAD"
+              },
+              {
+                "type": "string",
+                "const": "POST"
+              },
+              {
+                "type": "string",
+                "const": "PUT"
+              },
+              {
+                "type": "string",
+                "const": "PATCH"
+              },
+              {
+                "type": "string",
+                "const": "DELETE"
+              },
+              {
+                "type": "string",
+                "const": "OPTIONS"
+              },
+              {
+                "type": "string",
+                "const": "ALL"
+              }
+            ]
+          },
+          "path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Ruta completa normalizada, o null si no se pudo resolver."
+          },
+          "source": {
+            "type": "object",
+            "required": [
+              "file",
+              "line"
+            ],
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "line": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "resolution": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "static"
+              },
+              {
+                "type": "string",
+                "const": "partial"
+              },
+              {
+                "type": "string",
+                "const": "dynamic"
+              }
+            ],
+            "description": "static: ruta completa conocida; partial: se conoce un tramo o depende de un montaje no resuelto; dynamic: no se puede saber sin ejecutar."
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "health"
+              },
+              {
+                "type": "string",
+                "const": "auth"
+              },
+              {
+                "type": "string",
+                "const": "webhook"
+              },
+              {
+                "type": "string",
+                "const": "static"
+              },
+              {
+                "type": "string",
+                "const": "admin"
+              },
+              {
+                "type": "string",
+                "const": "api"
+              },
+              {
+                "type": "string",
+                "const": "page"
+              },
+              {
+                "type": "string",
+                "const": "other"
+              }
+            ],
+            "description": "Clasificación heurística por ruta y contexto; nunca una garantía."
+          },
+          "framework": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "express"
+              },
+              {
+                "type": "string",
+                "const": "rails"
+              }
+            ]
+          },
+          "signals": {
+            "type": "object",
+            "required": [
+              "auth_middleware",
+              "behind_licenroute",
+              "conditional"
+            ],
+            "properties": {
+              "auth_middleware": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Middleware o filtros con nombre de autenticación vistos antes de la ruta (heurístico)."
+              },
+              "behind_licenroute": {
+                "type": "boolean",
+                "description": "Registrada después de un middleware de LicenRoute en la misma app (heurístico)."
+              },
+              "conditional": {
+                "type": "boolean",
+                "description": "Dentro de un bucle, condición o bloque no comprendido."
+              }
+            }
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "unresolved": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "file",
+          "line",
+          "kind",
+          "reason",
+          "snippet"
+        ],
+        "properties": {
+          "file": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "kind": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "snippet": {
+            "type": "string",
+            "maxLength": 160,
+            "description": "Fragmento saneado (sin caracteres de control), truncado."
+          }
+        }
+      }
+    },
+    "skipped": {
+      "type": "object",
+      "required": [
+        "sensitive_files",
+        "too_large",
+        "symlinks",
+        "binary",
+        "unsafe_names",
+        "unparseable",
+        "limit_reached"
+      ],
+      "properties": {
+        "sensitive_files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Nunca abiertos: solo se informa de que existen."
+        },
+        "too_large": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "symlinks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "binary": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unsafe_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Ficheros con caracteres de control o de dirección en el nombre: no se abren (nombre mostrado con ?)."
+        },
+        "unparseable": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "file",
+              "error"
+            ],
+            "properties": {
+              "file": {
+                "type": "string"
+              },
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "limit_reached": {
+          "type": "boolean"
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Observaciones generales (versiones no soportadas, subproyectos, etc.)."
+    },
+    "completeness": {
+      "type": "object",
+      "required": [
+        "complete",
+        "message"
+      ],
+      "properties": {
+        "complete": {
+          "type": "boolean",
+          "const": false,
+          "description": "El análisis estático nunca garantiza haber encontrado todas las rutas."
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "description": "Ficheros leídos, con su hash."
+    }
+  }
+}

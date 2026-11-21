@@ -1,0 +1,26 @@
+{
+  "_comentario": "Vectores de identidad (Fase 10) calculados con Python (implementación independiente). Node, Ruby y la API deben coincidir.",
+  "cases": [
+    {
+      "clave_de_prueba": "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",
+      "site_id": "site_AbCdEf0123456789",
+      "id": "42",
+      "key_id": "0f86ed7c4c60294a",
+      "hash": "2eaadd0247c41ec87ad760053d7bf6ccd8bc5729a465573c89b19da4f1e1d363"
+    },
+    {
+      "clave_de_prueba": "clave-de-identidad-del-sitio-0123456789",
+      "site_id": "site_ZZZZZZZZZZZZZZZZ",
+      "id": "usuario@example.com",
+      "key_id": "c4c77a3ba89b67d0",
+      "hash": "4f3ae41ba31d84b83c1a022cf29a2b36788169a10f8b136d8ed13fa00dae6dbe"
+    },
+    {
+      "clave_de_prueba": "ñandú-ü-clave-larga-de-identidad-xxxxxxxx",
+      "site_id": "site_0000000000000000",
+      "id": "ID con espacios y ñ",
+      "key_id": "abc93716bffc0dff",
+      "hash": "440c5ae366fe5107d94a90e66bca61c9f9665cb7d51809af01b622a1e472f724"
+    }
+  ]
+}

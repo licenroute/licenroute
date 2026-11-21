@@ -1,0 +1,30 @@
+{
+  "description": "normalizePath(input) === expected. Incluye intentos de bypass de reglas (threat model T10). Compartido por la Decision API y los SDKs.",
+  "cases": [
+    { "input": "/", "expected": "/" },
+    { "input": "", "expected": "/" },
+    { "input": "/api/items", "expected": "/api/items" },
+    { "input": "/api/items/", "expected": "/api/items" },
+    { "input": "/api/items?page=2&token=x", "expected": "/api/items" },
+    { "input": "/api/items#frag", "expected": "/api/items" },
+    { "input": "/ADMIN/Users", "expected": "/admin/users", "note": "mayúsculas" },
+    { "input": "//admin///users", "expected": "/admin/users", "note": "barras repetidas" },
+    { "input": "/./admin/./users", "expected": "/admin/users" },
+    { "input": "/public/../admin/users", "expected": "/admin/users", "note": "traversal" },
+    { "input": "/../../admin", "expected": "/admin", "note": "no sale de la raíz" },
+    { "input": "/%61dmin/users", "expected": "/admin/users", "note": "letra codificada" },
+    { "input": "/%2e%2e/admin", "expected": "/admin", "note": "puntos codificados" },
+    { "input": "/public/%2e%2e/admin", "expected": "/admin" },
+    { "input": "/admin%2fusers", "expected": "/admin/users", "note": "barra codificada actúa como separador" },
+    { "input": "/admin%5cusers", "expected": "/admin/users", "note": "backslash codificado" },
+    { "input": "/admin\\users", "expected": "/admin/users", "note": "backslash" },
+    { "input": "/admin;jsessionid=1/users", "expected": "/admin/users", "note": "parámetros de matriz" },
+    { "input": "/admin;/users", "expected": "/admin/users" },
+    { "input": "/admin%00/users", "expected": "/admin/users", "note": "byte nulo" },
+    { "input": "/%252e%252e/admin", "expected": "/%252e%252e/admin", "note": "doble codificación: se decodifica una sola vez; el % resultante se re-escapa (forma canónica idempotente)" },
+    { "input": "/caf%C3%A9", "expected": "/café", "note": "UTF-8 válido" },
+    { "input": "/bad%ffseq%2fx", "expected": "/bad%25ffseq/x", "note": "UTF-8 inválido: lo ASCII se decodifica, el resto queda literal (y escapado)" },
+    { "input": "/a%zz", "expected": "/a%25zz", "note": "secuencia % inválida" },
+    { "input": "/a%25zz", "expected": "/a%25zz", "note": "idempotencia de la forma canónica" }
+  ]
+}

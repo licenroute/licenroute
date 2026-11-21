@@ -1,0 +1,31 @@
+{
+  "name": "licenroute-preview",
+  "private": true,
+  "description": "LicenRoute developer preview: licence keys, quotas and revocation for selected routes of an Express API, tested against a local simulator.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "packages/policy-contracts",
+    "packages/simulator",
+    "packages/cli",
+    "sdks/node-express"
+  ],
+  "scripts": {
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm test --workspaces --if-present && node --test integrations/assistants/test/assistants.test.mjs",
+    "build": "node scripts/build-packages.mjs",
+    "audit:public": "node scripts/audit-public.mjs .",
+    "validate:distribution": "node scripts/validate-distribution.mjs"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.19.2",
+    "esbuild": "0.28.2",
+    "express": "^5.3.0",
+    "typescript": "~6.0",
+    "vitest": "^5.0.3"
+  }
+}

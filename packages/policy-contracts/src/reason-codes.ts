@@ -1,0 +1,47 @@
+/** Códigos de razón explicables. Mantener sincronizado con docs/api/openapi.yaml (ReasonCode). */
+export const ReasonCodes = {
+  UNDER_RATE_LIMIT: "UNDER_RATE_LIMIT",
+  RATE_LIMIT_EXCEEDED: "RATE_LIMIT_EXCEEDED",
+  RATE_LIMIT_UNAVAILABLE: "RATE_LIMIT_UNAVAILABLE",
+  RULE_MATCH_BLOCK: "RULE_MATCH_BLOCK",
+  RULE_MATCH_ALLOW: "RULE_MATCH_ALLOW",
+  IP_DENYLIST: "IP_DENYLIST",
+  IP_ALLOWLIST: "IP_ALLOWLIST",
+  EXCLUDED_PATH: "EXCLUDED_PATH",
+  NO_POLICY: "NO_POLICY",
+  NO_SESSION: "NO_SESSION",
+  UA_MISSING: "UA_MISSING",
+  UA_KNOWN_AUTOMATION: "UA_KNOWN_AUTOMATION",
+  HIGH_RATE_NEAR_LIMIT: "HIGH_RATE_NEAR_LIMIT",
+  AUTHENTICATED_USER: "AUTHENTICATED_USER",
+  SCORE_OBSERVE: "SCORE_OBSERVE",
+  SCORE_THRESHOLD: "SCORE_THRESHOLD",
+  FALLBACK_OPEN: "FALLBACK_OPEN",
+  FALLBACK_CLOSED: "FALLBACK_CLOSED",
+  // Licencias (Fase 5)
+  LICENSE_REQUIRED: "LICENSE_REQUIRED",
+  LICENSE_VALID: "LICENSE_VALID",
+  LICENSE_INVALID: "LICENSE_INVALID",
+  LICENSE_REVOKED: "LICENSE_REVOKED",
+  LICENSE_EXPIRED: "LICENSE_EXPIRED",
+  QUOTA_EXHAUSTED: "QUOTA_EXHAUSTED",
+  USAGE_DUPLICATE: "USAGE_DUPLICATE",
+  REQUEST_ID_REUSED: "REQUEST_ID_REUSED",
+  // Publish I2: un conector Publish solo sirve rutas licenciadas; cualquier otra se bloquea.
+  PUBLISH_ROUTE_NOT_LICENSED: "PUBLISH_ROUTE_NOT_LICENSED",
+  // Endurecimiento previo al piloto (BL-11): plan con cobro aún no activado y acceso previo denegado.
+  LICENSE_NOT_ACTIVE: "LICENSE_NOT_ACTIVE",
+  // LicenRoute Trust (Fase 10)
+  CLIENT_AUTHENTICATED: "CLIENT_AUTHENTICATED",
+  CLIENT_AGENT_VERIFIED: "CLIENT_AGENT_VERIFIED",
+  AGENT_CREDENTIAL_INVALID: "AGENT_CREDENTIAL_INVALID",
+  IDENTITY_KEY_UNKNOWN: "IDENTITY_KEY_UNKNOWN",
+  // Señales de 10.4: SOLO se registran con prefijo SIM_ (nunca cambian la acción).
+  SIGNAL_IP_PREFIX_BURST: "SIGNAL_IP_PREFIX_BURST",
+  SIGNAL_IDENTITIES_PER_IP: "SIGNAL_IDENTITIES_PER_IP",
+} as const;
+
+export type ReasonCode = (typeof ReasonCodes)[keyof typeof ReasonCodes] | `SIM_${string}`;
+
+/** Prefijo para reglas en modo simulación: se registran pero no cambian la acción. */
+export const simulated = (code: string): ReasonCode => `SIM_${code}`;

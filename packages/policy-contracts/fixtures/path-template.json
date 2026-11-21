@@ -1,0 +1,17 @@
+{
+  "description": "pathTemplate(normalizePath(input)) === expected. Plantillas para eventos y métricas (Fase 4).",
+  "cases": [
+    { "input": "/", "expected": "/" },
+    { "input": "/productos", "expected": "/productos" },
+    { "input": "/orders/123", "expected": "/orders/:id" },
+    { "input": "/orders/123/items/9", "expected": "/orders/:id/items/:id" },
+    { "input": "/users/0e8b4c62-1f0a-4c5e-9b3a-2d7f6a1c9e00", "expected": "/users/:id" },
+    { "input": "/files/9f86d081884c7d659a2feaa0c55ad015", "expected": "/files/:id" },
+    { "input": "/reset/Ab3dEf6hIj9kLm2nOp5q", "expected": "/reset/:id", "note": "token opaco en la ruta" },
+    { "input": "/api/v2/items", "expected": "/api/v2/items", "note": "v2 no es un id" },
+    { "input": "/blog/mi-articulo-largo-sobre-bots", "expected": "/blog/mi-articulo-largo-sobre-bots", "note": "slug sin dígitos se conserva" },
+    { "input": "/admin.json", "expected": "/admin.json" },
+    { "input": "/orders/123?token=secreto", "expected": "/orders/:id", "note": "sin query" },
+    { "input": "/ORDERS/123/", "expected": "/orders/:id" }
+  ]
+}

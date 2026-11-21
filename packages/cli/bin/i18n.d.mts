@@ -1,0 +1,12 @@
+export type Lang = "en" | "es";
+export const LANGS: Lang[];
+export const DEFAULT_LANG: "en";
+export const CATALOGS: Record<Lang, Record<string, string>>;
+export function langOfLocale(value: string | undefined): string | null;
+export function resolveLang(flag: string | undefined, env?: NodeJS.ProcessEnv): { lang: string; source: string } | { error: string; lang?: undefined; source?: undefined };
+export function setLang(lang: string): void;
+export function getLang(): string;
+export function t(key: string, params?: Record<string, unknown>, lang?: string): string;
+export function tc(key: string, params?: Record<string, unknown>): string;
+export function localize(text: string, lang?: string): string;
+export function placeholders(msg: string): string[];

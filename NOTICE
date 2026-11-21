@@ -1,0 +1,24 @@
+LicenRoute developer preview
+Copyright 2026 Christian Vargas
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+The license covers only the files in this repository. It does not cover:
+
+  * LicenRoute Central (the hosted service, its Decision API, administration and
+    connectors), which is proprietary and is not included here;
+  * the "LicenRoute" name and logos (Apache-2.0 section 6 grants no trademark rights);
+  * third-party software listed below, which keeps its own license.
+
+Third-party software bundled into built packages (packages/cli/.pack/*.tgz):
+
+  * TypeScript (Apache-2.0), Copyright (c) Microsoft Corporation.
+    Bundled in dist/main.cjs to parse, never run, the analysed application.
+    License: licenses/typescript-Apache-2.0.txt
+    Third-party notices: licenses/typescript-ThirdPartyNoticeText.txt
+  * TypeBox (MIT), Copyright (c) 2017-2026 Haydn Paterson.
+    Bundled in dist/main.cjs and dist/simulator.cjs. License: licenses/typebox-MIT.txt
+
+The Express SDK (sdks/node-express) depends on TypeBox at runtime as a normal npm
+dependency; it is not bundled. Development-only tools (vitest, esbuild, Express in
+tests and in the example) are installed from the public npm registry and are not
+redistributed. THIRD_PARTY_LICENSES.md lists every package in package-lock.json.

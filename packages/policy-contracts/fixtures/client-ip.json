@@ -1,0 +1,19 @@
+{
+  "description": "Resolución de la IP del cliente en los SDK (threat model T3). `remote`: IP de la conexión TCP. `xff`: cabecera X-Forwarded-For recibida (null = ausente). `trusted`: CIDR de proxies de confianza configurados. Algoritmo: si `remote` no es de confianza, es la IP del cliente y XFF se ignora; si lo es, se recorre XFF de derecha a izquierda saltando proxies de confianza y la primera IP no confiable es el cliente. Entradas no válidas en XFF detienen el recorrido (se usa el último salto confiable).",
+  "cases": [
+    { "remote": "203.0.113.10", "xff": null, "trusted": [], "expected": "203.0.113.10", "note": "sin proxy" },
+    { "remote": "203.0.113.10", "xff": "1.2.3.4", "trusted": [], "expected": "203.0.113.10", "note": "XFF de un cliente no confiable se ignora (spoofing)" },
+    { "remote": "10.0.0.5", "xff": "1.2.3.4", "trusted": [], "expected": "10.0.0.5", "note": "una IP privada NO es de confianza por defecto" },
+    { "remote": "10.0.0.5", "xff": "198.51.100.7", "trusted": ["10.0.0.0/8"], "expected": "198.51.100.7", "note": "detrás de un balanceador de confianza" },
+    { "remote": "10.0.0.5", "xff": "6.6.6.6, 198.51.100.7", "trusted": ["10.0.0.0/8"], "expected": "198.51.100.7", "note": "el cliente antepuso una IP falsa: se toma la más a la derecha no confiable" },
+    { "remote": "10.0.0.5", "xff": "198.51.100.7, 10.0.0.9", "trusted": ["10.0.0.0/8"], "expected": "198.51.100.7", "note": "dos proxies de confianza encadenados" },
+    { "remote": "10.0.0.5", "xff": "10.0.0.8, 10.0.0.9", "trusted": ["10.0.0.0/8"], "expected": "10.0.0.8", "note": "todos de confianza: el más a la izquierda" },
+    { "remote": "10.0.0.5", "xff": "basura, 198.51.100.7", "trusted": ["10.0.0.0/8"], "expected": "198.51.100.7" },
+    { "remote": "10.0.0.5", "xff": "198.51.100.7, basura", "trusted": ["10.0.0.0/8"], "expected": "10.0.0.5", "note": "entrada inválida: se detiene en el último salto confiable" },
+    { "remote": "10.0.0.5", "xff": "", "trusted": ["10.0.0.0/8"], "expected": "10.0.0.5" },
+    { "remote": "::ffff:10.0.0.5", "xff": "198.51.100.7", "trusted": ["10.0.0.0/8"], "expected": "198.51.100.7", "note": "IPv4 mapeada en IPv6" },
+    { "remote": "2001:db8::1", "xff": "2001:db8:ffff::9", "trusted": ["2001:db8::/48"], "expected": "2001:db8:ffff::9" },
+    { "remote": "10.0.0.5", "xff": " 198.51.100.7 ,10.0.0.9 ", "trusted": ["10.0.0.0/8"], "expected": "198.51.100.7", "note": "espacios" },
+    { "remote": "10.0.0.5", "xff": "198.51.100.7:4321", "trusted": ["10.0.0.0/8"], "expected": "10.0.0.5", "note": "con puerto: no es una IP válida" }
+  ]
+}

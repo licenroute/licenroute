@@ -1,0 +1,6 @@
+{
+  "name": "roto",
+  "dependencies": {
+    "express": "^5.0.0"
+  }
+}

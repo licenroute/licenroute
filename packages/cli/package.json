@@ -1,0 +1,34 @@
+{
+  "name": "@licenroute/cli",
+  "version": "0.3.1",
+  "private": true,
+  "license": "Apache-2.0",
+  "description": "CLI de LicenRoute (S5): detect y plan, solo lectura. Analiza una app Express o Rails sin ejecutar su código ni modificar archivos.",
+  "type": "module",
+  "bin": {
+    "licenroute": "./bin/licenroute.mjs"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "schema": "node --disable-warning=ExperimentalWarning scripts/write-schema.ts",
+    "pack": "node scripts/pack.mjs",
+    "accept-dist": "node scripts/accept-dist.mjs"
+  },
+  "dependencies": {
+    "typebox": "^1.3.36",
+    "typescript": "~6.0"
+  },
+  "files": [
+    "bin",
+    "src",
+    "schema",
+    "README.md"
+  ]
+}

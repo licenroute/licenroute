@@ -1,0 +1,445 @@
+{
+  "description": "Compatibilidad de rutas. `target`: request target crudo. `normalized`: normalizePath(target). `rule_matches`: la regla /admin/** coincide. `observed`: respuesta REAL del framework con rutas `/admin` y `/admin/*` ('admin' = llegó al handler protegido; si no, el código HTTP). Invariante: si algún framework llega a 'admin', rule_matches debe ser true (sin bypass). Versiones: Express 4.22.3 / 5.3.0, Rails 8.1.4 sobre Puma. Regenerar: tests/compat/express/generate-fixture.ts.",
+  "cases": [
+    {
+      "target": "/admin",
+      "normalized": "/admin",
+      "rule_matches": true,
+      "observed": {
+        "express4": "admin",
+        "express5": "admin",
+        "rails": "admin"
+      }
+    },
+    {
+      "target": "/admin/",
+      "normalized": "/admin",
+      "rule_matches": true,
+      "observed": {
+        "express4": "admin",
+        "express5": "admin",
+        "rails": "admin"
+      }
+    },
+    {
+      "target": "/admin/users",
+      "normalized": "/admin/users",
+      "rule_matches": true,
+      "observed": {
+        "express4": "admin",
+        "express5": "admin",
+        "rails": "admin"
+      }
+    },
+    {
+      "target": "/ADMIN/users",
+      "normalized": "/admin/users",
+      "rule_matches": true,
+      "observed": {
+        "express4": "admin",
+        "express5": "admin",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/Admin",
+      "normalized": "/admin",
+      "rule_matches": true,
+      "observed": {
+        "express4": "admin",
+        "express5": "admin",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin?x=1",
+      "normalized": "/admin",
+      "rule_matches": true,
+      "observed": {
+        "express4": "admin",
+        "express5": "admin",
+        "rails": "admin"
+      }
+    },
+    {
+      "target": "/admin#frag",
+      "normalized": "/admin",
+      "rule_matches": true,
+      "observed": {
+        "express4": "admin",
+        "express5": "admin",
+        "rails": "admin"
+      }
+    },
+    {
+      "target": "/admin%3Fx",
+      "normalized": "/admin%3Fx",
+      "rule_matches": false,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin%3fx/users",
+      "normalized": "/admin%3Fx/users",
+      "rule_matches": false,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin%23x",
+      "normalized": "/admin%23x",
+      "rule_matches": false,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin%3F",
+      "normalized": "/admin%3F",
+      "rule_matches": false,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin%23",
+      "normalized": "/admin%23",
+      "rule_matches": false,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/x%3F/../admin",
+      "normalized": "/admin",
+      "rule_matches": true,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/x%23/../admin/users",
+      "normalized": "/admin/users",
+      "rule_matches": true,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin/%3F../x",
+      "normalized": "/admin/%3F../x",
+      "rule_matches": true,
+      "observed": {
+        "express4": "admin",
+        "express5": "admin",
+        "rails": "admin"
+      }
+    },
+    {
+      "target": "/%61dmin",
+      "normalized": "/admin",
+      "rule_matches": true,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/adm%69n/users",
+      "normalized": "/admin/users",
+      "rule_matches": true,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/%2561dmin",
+      "normalized": "/%2561dmin",
+      "rule_matches": false,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin%2fusers",
+      "normalized": "/admin/users",
+      "rule_matches": true,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin%2Fusers",
+      "normalized": "/admin/users",
+      "rule_matches": true,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin%5cusers",
+      "normalized": "/admin/users",
+      "rule_matches": true,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin%",
+      "normalized": "/admin%25",
+      "rule_matches": false,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin%2",
+      "normalized": "/admin%252",
+      "rule_matches": false,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin%zz",
+      "normalized": "/admin%25zz",
+      "rule_matches": false,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin%00",
+      "normalized": "/admin",
+      "rule_matches": true,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin%c0%af",
+      "normalized": "/admin%25c0%25af",
+      "rule_matches": false,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "500"
+      }
+    },
+    {
+      "target": "/admin%e2%80%8b",
+      "normalized": "/admin​",
+      "rule_matches": false,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin;x=1",
+      "normalized": "/admin",
+      "rule_matches": true,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin;/users",
+      "normalized": "/admin/users",
+      "rule_matches": true,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "//admin",
+      "normalized": "/admin",
+      "rule_matches": true,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "admin"
+      }
+    },
+    {
+      "target": "/./admin",
+      "normalized": "/admin",
+      "rule_matches": true,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/x/../admin",
+      "normalized": "/admin",
+      "rule_matches": true,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/x/..%2fadmin",
+      "normalized": "/admin",
+      "rule_matches": true,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/%2e%2e/admin",
+      "normalized": "/admin",
+      "rule_matches": true,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/x/%2e%2e/admin",
+      "normalized": "/admin",
+      "rule_matches": true,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin.json",
+      "normalized": "/admin.json",
+      "rule_matches": true,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "admin"
+      }
+    },
+    {
+      "target": "/admin/users.json",
+      "normalized": "/admin/users.json",
+      "rule_matches": true,
+      "observed": {
+        "express4": "admin",
+        "express5": "admin",
+        "rails": "admin"
+      }
+    },
+    {
+      "target": "/admin.json/x",
+      "normalized": "/admin.json/x",
+      "rule_matches": false,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin..",
+      "normalized": "/admin..",
+      "rule_matches": false,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin%2e",
+      "normalized": "/admin.",
+      "rule_matches": false,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin%20",
+      "normalized": "/admin ",
+      "rule_matches": false,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin%09",
+      "normalized": "/admin\t",
+      "rule_matches": false,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    },
+    {
+      "target": "/admin/users?redirect=/x",
+      "normalized": "/admin/users",
+      "rule_matches": true,
+      "observed": {
+        "express4": "admin",
+        "express5": "admin",
+        "rails": "admin"
+      }
+    },
+    {
+      "target": "/public/admin",
+      "normalized": "/public/admin",
+      "rule_matches": false,
+      "observed": {
+        "express4": "404",
+        "express5": "404",
+        "rails": "404"
+      }
+    }
+  ]
+}

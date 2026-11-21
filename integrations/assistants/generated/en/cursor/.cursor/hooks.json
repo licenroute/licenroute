@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": "node .cursor/hooks/licenroute-guard.mjs cursor en",
+        "matcher": "licenroute|LICENROUTE_APPROVAL|LICENROUTE_INSECURE_TEST|\\.env",
+        "timeout": 10,
+        "failClosed": true
+      }
+    ]
+  }
+}

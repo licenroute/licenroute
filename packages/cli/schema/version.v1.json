@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "licenroute.cli.version/v1",
+  "title": "Metadatos de compatibilidad de la CLI",
+  "description": "Salida de licenroute --version --json. No modifica los esquemas detect, plan, apply, undo, test ni doctor, que siguen en v1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "tool", "distribution", "contracts"],
+  "properties": {
+    "schema": { "const": "licenroute.cli.version/v1" },
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "const": "@licenroute/cli" },
+        "version": { "type": "string" }
+      }
+    },
+    "distribution": { "enum": ["source", "compiled"] },
+    "contracts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["detect", "plan", "apply", "undo", "test", "doctor"],
+      "properties": {
+        "detect": { "const": "licenroute.cli.detect/v1" },
+        "plan": { "const": "licenroute.cli.plan/v1" },
+        "apply": { "const": "licenroute.cli.apply/v1" },
+        "undo": { "const": "licenroute.cli.undo/v1" },
+        "test": { "const": "licenroute.cli.test/v1" },
+        "doctor": { "const": "licenroute.cli.doctor/v1" }
+      }
+    }
+  }
+}

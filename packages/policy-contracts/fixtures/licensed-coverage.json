@@ -1,0 +1,19 @@
+{
+  "_comentario": "F2 (EVAL-01/02): cobertura de rutas declaradas de pago por la política verificada. Gemelos: requestCovered/uncoveredDeclared (TS) y Botgate::DeclaredCoverage (Ruby).",
+  "cases": [
+    { "name": "sin política publicada", "routes": [], "declared": ["/premium/**"], "uncovered": ["/premium/**"],
+      "requests": [ { "path": "/premium/x", "method": "GET", "covered": false } ] },
+    { "name": "plan publicado que cubre el patrón", "routes": [ { "route_pattern": "/premium/**", "methods": [] } ], "declared": ["/premium/**"], "uncovered": [],
+      "requests": [ { "path": "/premium/x/y", "method": "GET", "covered": true }, { "path": "/premium", "method": "POST", "covered": true }, { "path": "/publica", "method": "GET", "covered": false } ] },
+    { "name": "solapado: el plan cubre solo una parte", "routes": [ { "route_pattern": "/premium/precios/**", "methods": [] } ], "declared": ["/premium/**"], "uncovered": ["/premium/**"],
+      "requests": [ { "path": "/premium/precios/1", "method": "GET", "covered": true }, { "path": "/premium/otros/1", "method": "GET", "covered": false } ] },
+    { "name": "plan más amplio que lo declarado", "routes": [ { "route_pattern": "/**", "methods": [] } ], "declared": ["/premium/**", "/datos/*"], "uncovered": [],
+      "requests": [ { "path": "/datos/1", "method": "GET", "covered": true } ] },
+    { "name": "plan restringido a GET", "routes": [ { "route_pattern": "/premium/**", "methods": ["GET"] } ], "declared": ["/premium/**"], "uncovered": ["/premium/**"],
+      "requests": [ { "path": "/premium/x", "method": "GET", "covered": true }, { "path": "/premium/x", "method": "POST", "covered": false } ] },
+    { "name": "dos patrones declarados, uno sin plan", "routes": [ { "route_pattern": "/datos/**", "methods": [] } ], "declared": ["/datos/**", "/informes/**"], "uncovered": ["/informes/**"],
+      "requests": [ { "path": "/datos/a", "method": "GET", "covered": true }, { "path": "/informes/a", "method": "GET", "covered": false } ] },
+    { "name": "patrón con comodín de segmento no cubierto por uno más estrecho", "routes": [ { "route_pattern": "/premium/a/**", "methods": [] } ], "declared": ["/premium/*/**"], "uncovered": ["/premium/*/**"],
+      "requests": [ { "path": "/premium/a/1", "method": "GET", "covered": true }, { "path": "/premium/b/1", "method": "GET", "covered": false } ] }
+  ]
+}
