@@ -85,7 +85,7 @@ with synthetic credentials. To charge for real routes, connect the app to the ho
 payments there stay in Stripe test mode for now. Messages in English (default) or Spanish: \`--lang en|es\` or \`LICENROUTE_LANG\`; \`--json\`
 output is always English.
 
-Requires Node 24 or later. The TypeScript compiler is bundled in \`dist/main.cjs\` only to read (never run) the code of
+Requires Node.js 22.13 or later. The TypeScript compiler is bundled in \`dist/main.cjs\` only to read (never run) the code of
 the analysed app.
 
 Install it in your project as a development dependency (scoped name only):
@@ -121,7 +121,7 @@ writeFileSync(join(stage, "package.json"), `${JSON.stringify({
   keywords: ["express", "api", "license-keys", "quota", "middleware", "claude-code", "cursor"],
   type: "module",
   bin: { licenroute: "./bin/licenroute.mjs", "licenroute-simulator": "./bin/licenroute-simulator.mjs" },
-  engines: { node: ">=24" },
+  engines: { node: ">=22.13" },
   files: ["bin", "dist", "schema", "assistants", "README.md", "LICENSE", "NOTICE", "licenses"],
 }, null, 2)}\n`);
 

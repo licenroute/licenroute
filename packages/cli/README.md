@@ -33,7 +33,7 @@ it in their own terminal. Everything it writes can be reverted with `licenroute 
 
 ## Source layout
 
-`src/` (TypeScript, run directly by Node 24 in development), `bin/` (launchers), `schema/` (JSON schemas),
+`src/` (TypeScript, run directly by Node 24 in development; the published package runs on Node 22.13+), `bin/` (launchers), `schema/` (JSON schemas),
 `scripts/pack.mjs` (bundles `dist/main.cjs` and the simulator into a self-contained tarball, with the licences of
 the bundled TypeScript compiler and typebox), `test/` (vitest).
 

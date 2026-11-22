@@ -4,7 +4,7 @@ Time: about 10 minutes. Everything runs locally against the LicenRoute simulator
 charged and nothing leaves your machine. The CLI speaks English by default (`--lang es` for Spanish; the
 [Spanish tutorial](es/tutorial-express.md) shows the Spanish output).
 
-You need Node.js 24+, npm and git. Run the commands **yourself, in a real terminal**: two steps ask you to type a
+You need Node.js 22.13+ (24 recommended), npm and git. Run the commands **yourself, in a real terminal**: two steps ask you to type a
 challenge that only appears there.
 
 ## 1. Build the packages
@@ -23,7 +23,7 @@ B=$(pwd)/dist-packages
 cp -R examples/express-demo /tmp/my-api && cd /tmp/my-api
 git init -q && git add -A && git commit -qm "before LicenRoute"     # so you can see every change LicenRoute makes
 npm install --ignore-scripts
-npm install --save-dev --ignore-scripts "$B/licenroute-cli-0.3.3.tgz"
+npm install --save-dev --ignore-scripts "$B/licenroute-cli-0.3.4.tgz"
 npm install --ignore-scripts "$B/licenroute-connect-express-0.8.1.tgz"
 npm ls @licenroute/cli          # must list the package you just installed
 ```

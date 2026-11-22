@@ -1,6 +1,6 @@
 {
   "name": "@licenroute/cli",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "private": true,
   "license": "Apache-2.0",
   "description": "CLI de LicenRoute (S5): detect y plan, solo lectura. Analiza una app Express o Rails sin ejecutar su código ni modificar archivos.",

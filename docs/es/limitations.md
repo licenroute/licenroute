@@ -34,9 +34,9 @@
 
 ## Plataformas e idiomas
 
-- Node.js 24 o posterior (la CLI usa el modelo de permisos de Node). El SDK por sí solo admite Node 20+.
+- Node.js 22.13 o posterior para la CLI (ejecuta cada orden con el modelo de permisos de Node, estable desde la 22.13); Node 20 ya no tiene soporte y no lo incluye. El SDK por sí solo admite Node 20+. Construir este repositorio (`npm run build`, `validate:distribution`) necesita Node 24 con npm 11.
 - Estado de la validación de este repositorio (`npm run validate:distribution`, Node.js 24):
-  - macOS en Apple silicon (arm64): pasa con la CLI 0.3.3.
+  - macOS en Apple silicon (arm64): pasa con la CLI 0.3.4 en Node 24; la aceptación de los paquetes construidos también pasa en Node 22.17.
   - Ubuntu 24.04 x86_64 en una máquina virtual completa (no un contenedor): pasó con la CLI 0.3.1; no se ha repetido con la 0.3.2 ni la 0.3.3.
   - Ubuntu 24.04 arm64 en un contenedor: pasó con la CLI 0.3.0; no se ha repetido después.
   - x86_64 emulado (Rosetta en Apple silicon): falla una prueba interna del modelo de permisos de Node. En x86_64 real

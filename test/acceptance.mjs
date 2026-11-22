@@ -20,11 +20,11 @@ const PHRASES = {
   en: { unsupported: /is not supported in this LicenRoute distribution/, decision: /Need your decision/, previewOf: /Preview of api-catalogo, api-informes/, nothingWritten: /Nothing was written/,
     diffChanged: /the diff has changed/, applied: /applied/, noConsent: /--consent does not exist/, noScript: /no package\.json script is used/, demo: /DEMO MODE · LOCAL SIMULATION/,
     methodsOnly: /licence only on GET, HEAD/, confirmed: /Approval confirmed\./, notConfirmed: /Not confirmed/, falseDep: /no longer declares it|Sandbox/, declared: /still declares @licenroute\/connect-express/,
-    skill: /Language of these instructions: \*\*English \(en\)\*\*/ },
+    skill: /Language of these instructions: \*\*English \(en\)\*\*/, nodeTooOld: /needs Node\.js 22\.13 or later/ },
   es: { unsupported: /no está soportado en esta distribución/, decision: /Requieren tu decisión/, previewOf: /Vista previa de api-catalogo, api-informes/, nothingWritten: /Nada se ha escrito/,
     diffChanged: /el diff ha cambiado/, applied: /aplicado/, noConsent: /--consent no existe/, noScript: /no se usa ningún script de package\.json/, demo: /MODO DEMO · SIMULACIÓN LOCAL/,
     methodsOnly: /licencia solo en GET, HEAD/, confirmed: /Aprobación confirmada\./, notConfirmed: /No confirmado/, falseDep: /ya no lo declara|Sandbox/, declared: /sigue declarando @licenroute\/connect-express/,
-    skill: /Idioma de estas instrucciones: \*\*español \(es\)\*\*/ },
+    skill: /Idioma de estas instrucciones: \*\*español \(es\)\*\*/, nodeTooOld: /necesita Node\.js 22\.13 o posterior/ },
 };
 const T = PHRASES[LANG];
 // --samples <dir>: also saves the human output of init, the write, dev and test (for the docs). Never secrets: checked below.
@@ -129,6 +129,18 @@ try {
   const licenroute = join(app, "node_modules/.bin/licenroute");
   if (i1.status === 0 && i2.status === 0 && existsSync(licenroute)) ok(`install: CLI (dev) and SDK from dist-packages/, express and typebox from the public registry or the npm cache, --ignore-scripts (${timings.install})`);
   else { ko(`npm install: ${(i1.stderr || i2.stderr).slice(-400)}`); throw new Error("instalación"); }
+  // 0.3.4: the CLI runs on Node 22.13+ (from there the permission model is stable and called --permission). On an older
+  //        Node the launcher says so plainly and runs nothing; before, the child died with "bad option: --permission".
+  //        The version is faked in the launcher only (--import); the child it would start is never reached.
+  {
+    const cliBin = join(app, "node_modules/@licenroute/cli/bin/licenroute.mjs");
+    const as = (v) => run(process.execPath, ["--import", `data:text/javascript,Object.defineProperty(process.versions,"node",{value:"${v}"})`, cliBin, "--version"]);
+    const old = ["20.19.0", "22.12.0", "23.4.0"].map((v) => [v, as(v)]);
+    const fresh = as("22.13.0");
+    const refused = old.every(([v, r]) => r.status === 2 && T.nodeTooOld.test(r.stderr) && r.stderr.includes(`v${v}`) && !/bad option/.test(r.stderr) && !r.stdout);
+    if (refused && fresh.status === 0 && /licenroute 0\.3\.4/.test(fresh.stdout)) ok("Node version: 20.19, 22.12 and 23.4 get a plain «needs Node.js 22.13» message and nothing runs; 22.13 runs");
+    else ko(`Node version: ${old.map(([v, r]) => `${v}→${r.status} ${r.stderr.slice(0, 120)}`).join(" | ")} | 22.13→${fresh.status} ${fresh.stdout.slice(0, 60)}${fresh.stderr.slice(0, 120)}`);
+  }
   // 2a. 0.2.8: the way the Skill runs LicenRoute. The local binary is the approved package and runs without asking the
   //     registry; without the package, `npm ls` fails (the Skill stops) without asking it either; and `npx licenroute` in a
   //     project without it asks the registry for the unscoped `licenroute` package (not this one) (why the Skill forbids it). The

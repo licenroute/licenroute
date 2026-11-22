@@ -8,6 +8,12 @@ import { dirname, join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { t } from "../bin/i18n.mjs";
 
+// Node 22.13+ (23.5+): from those versions the permission model is stable and is called --permission. Before, the child
+// would die with a cryptic "bad option"; say it plainly and run nothing.
+{
+  const [maj, min] = process.versions.node.split(".").map(Number);
+  if (!(maj > 23 || (maj === 23 && min >= 5) || (maj === 22 && min >= 13))) { process.stderr.write(t("launcher.node_too_old", { version: `v${process.versions.node}` })); process.exit(2); }
+}
 const pkgRoot = realpathSync(dirname(dirname(fileURLToPath(import.meta.url))));
 const entry = join(pkgRoot, "dist", "simulator.cjs");
 const args = process.argv.slice(2);

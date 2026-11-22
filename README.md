@@ -21,7 +21,7 @@ types a one-time challenge in their own terminal. `licenroute undo` reverts it e
 
 | Path | What it is |
 |---|---|
-| `packages/cli` | `@licenroute/cli` 0.3.3 — the `licenroute` command (TypeScript source) |
+| `packages/cli` | `@licenroute/cli` 0.3.4 — the `licenroute` command (TypeScript source) |
 | `sdks/node-express` | `@licenroute/connect-express` 0.8.1 — Express 4/5 middleware (TypeScript source) |
 | `packages/simulator` | local decision simulator for demo mode (bundled into the CLI package) |
 | `packages/policy-contracts` | schemas, route matching and canonical JSON shared by the SDK and the simulator (bundled) |
@@ -35,12 +35,12 @@ LicenRoute Central (the hosted service that would issue real licences and enforc
 
 ## Try it in 5 minutes
 
-Requirements: Node.js 24 or later with npm, git, and (Linux) `script` from util-linux. No Docker, no account.
+Requirements: Node.js 22.13 or later with npm, git, and (Linux) `script` from util-linux. No Docker, no account.
 
 ```bash
 git clone https://github.com/licenroute/licenroute.git licenroute && cd licenroute
 npm ci --ignore-scripts          # dev dependencies from the public npm registry
-npm run build                    # dist-packages/licenroute-cli-0.3.3.tgz and licenroute-connect-express-0.8.1.tgz
+npm run build                    # dist-packages/licenroute-cli-0.3.4.tgz and licenroute-connect-express-0.8.1.tgz
 ./demo/demo.sh                   # read-only: copies the example API, shows the plans and the exact diff
 ```
 
@@ -66,9 +66,9 @@ service down). They are the same in every language ([docs/i18n.md](docs/i18n.md)
 
 ```bash
 cd your-api
-npm install --save-dev --ignore-scripts @licenroute/cli@0.3.3      # from npm (scoped name only)
+npm install --save-dev --ignore-scripts @licenroute/cli@0.3.4      # from npm (scoped name only)
 npm install --ignore-scripts @licenroute/connect-express@0.8.1
-# or the packages you built and verified yourself: <licenroute>/dist-packages/licenroute-cli-0.3.3.tgz and …-connect-express-0.8.1.tgz
+# or the packages you built and verified yourself: <licenroute>/dist-packages/licenroute-cli-0.3.4.tgz and …-connect-express-0.8.1.tgz
 npm ls @licenroute/cli                    # must list the package you just installed
 ./node_modules/.bin/licenroute init .                      # numbered plans; routes it will never touch; routes left to you
 ./node_modules/.bin/licenroute init . --plans 1 --app your-api          # full diff preview, writes nothing

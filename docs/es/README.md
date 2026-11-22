@@ -21,7 +21,7 @@ reto de un solo uso en su propio terminal. `licenroute undo` lo revierte exactam
 
 | Ruta | Qué es |
 |---|---|
-| `packages/cli` | `@licenroute/cli` 0.3.3 — la orden `licenroute` (código TypeScript) |
+| `packages/cli` | `@licenroute/cli` 0.3.4 — la orden `licenroute` (código TypeScript) |
 | `sdks/node-express` | `@licenroute/connect-express` 0.8.1 — middleware para Express 4/5 (código TypeScript) |
 | `packages/simulator` | simulador local de decisiones para el modo demo (va dentro del paquete de la CLI) |
 | `packages/policy-contracts` | esquemas, comparación de rutas y JSON canónico que comparten el SDK y el simulador (incrustado) |
@@ -35,12 +35,12 @@ forma parte de este repositorio.
 
 ## Pruébalo en 5 minutos
 
-Requisitos: Node.js 24 o posterior con npm, git y (en Linux) `script` de util-linux. Sin Docker y sin cuenta.
+Requisitos: Node.js 22.13 o posterior con npm, git y (en Linux) `script` de util-linux. Sin Docker y sin cuenta.
 
 ```bash
 git clone https://github.com/licenroute/licenroute.git licenroute && cd licenroute
 npm ci --ignore-scripts          # dependencias de desarrollo del registro público de npm
-npm run build                    # dist-packages/licenroute-cli-0.3.3.tgz y licenroute-connect-express-0.8.1.tgz
+npm run build                    # dist-packages/licenroute-cli-0.3.4.tgz y licenroute-connect-express-0.8.1.tgz
 export LICENROUTE_LANG=es           # mensajes en español
 ./demo/demo.sh                   # solo lectura: copia la API de ejemplo y enseña los planes y el diff exacto
 ```
@@ -62,9 +62,9 @@ SIMULATED PASS: la integración responde como se espera contra el SIMULADOR. No 
 
 ```bash
 cd tu-api
-npm install --save-dev --ignore-scripts @licenroute/cli@0.3.3      # desde npm (solo el nombre con ámbito)
+npm install --save-dev --ignore-scripts @licenroute/cli@0.3.4      # desde npm (solo el nombre con ámbito)
 npm install --ignore-scripts @licenroute/connect-express@0.8.1
-# o los paquetes que construiste y verificaste tú: <licenroute>/dist-packages/licenroute-cli-0.3.3.tgz y …-connect-express-0.8.1.tgz
+# o los paquetes que construiste y verificaste tú: <licenroute>/dist-packages/licenroute-cli-0.3.4.tgz y …-connect-express-0.8.1.tgz
 npm ls @licenroute/cli                    # debe listar el paquete que acabas de instalar
 ./node_modules/.bin/licenroute init . --lang es                           # planes numerados; rutas que nunca tocará; rutas que decides tú
 ./node_modules/.bin/licenroute init . --plans 1 --app tu-api --lang es    # vista previa del diff completo; no escribe nada

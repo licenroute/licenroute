@@ -18,6 +18,12 @@ import { resolveLang, setLang, t } from "../bin/i18n.mjs";
   if (r.error) { process.stderr.write(`licenroute: ${r.error}\n`); process.exit(2); }
   setLang(argv.includes("--json") ? "en" : r.lang);
 }
+// Node 22.13+ (23.5+): from those versions the permission model is stable and is called --permission. Before, the child
+// would die with a cryptic "bad option"; say it plainly and run nothing.
+{
+  const [maj, min] = process.versions.node.split(".").map(Number);
+  if (!(maj > 23 || (maj === 23 && min >= 5) || (maj === 22 && min >= 13))) { process.stderr.write(t("launcher.node_too_old", { version: `v${process.versions.node}` })); process.exit(2); }
+}
 const pkgRoot = realpathSync(dirname(dirname(fileURLToPath(import.meta.url))));
 const entry = join(pkgRoot, "dist", "main.cjs");
 if (!existsSync(entry)) { process.stderr.write(t("launcher.no_dist")); process.exit(1); }

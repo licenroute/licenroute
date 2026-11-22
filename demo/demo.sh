@@ -4,7 +4,7 @@
 # challenge (see docs/tutorial-express.md). No private service, no network for LicenRoute, synthetic data only.
 set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
-node -e 'process.exit(Number(process.versions.node.split(".")[0]) >= 24 ? 0 : 1)' || { echo "Node 24+ required"; exit 2; }
+node -e 'const [a,b]=process.versions.node.split(".").map(Number); process.exit(a>23||(a===23&&b>=5)||(a===22&&b>=13) ? 0 : 1)' || { echo "Node.js 22.13+ required"; exit 2; }
 CLI=$(ls "$ROOT"/dist-packages/*-cli-*.tgz 2>/dev/null | head -1 || true)
 SDK=$(ls "$ROOT"/dist-packages/*-connect-express-*.tgz 2>/dev/null | head -1 || true)
 [ -n "$CLI" ] && [ -n "$SDK" ] || { echo "Run 'npm run build' first (dist-packages/ is empty)"; exit 2; }

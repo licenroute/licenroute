@@ -4,7 +4,7 @@ Tiempo: unos 10 minutos. Todo se ejecuta en local contra el simulador de LicenRo
 cobra nada y nada sale de tu máquina. Los mensajes de la CLI salen en español con `LICENROUTE_LANG=es` (o `--lang es`, o un
 locale del sistema en español); sin eso, en inglés ([tutorial en inglés](../tutorial-express.md)).
 
-Necesitas Node.js 24+, npm y git. Ejecuta las órdenes **tú, en un terminal de verdad**: dos pasos te piden teclear un
+Necesitas Node.js 22.13+ (recomendado 24), npm y git. Ejecuta las órdenes **tú, en un terminal de verdad**: dos pasos te piden teclear un
 reto que solo aparece allí.
 
 ## 1. Construye los paquetes
@@ -24,7 +24,7 @@ export LICENROUTE_LANG=es           # mensajes en español en el resto del tutor
 cp -R examples/express-demo /tmp/mi-api && cd /tmp/mi-api
 git init -q && git add -A && git commit -qm "antes de LicenRoute"     # para ver cada cambio que haga LicenRoute
 npm install --ignore-scripts
-npm install --save-dev --ignore-scripts "$B/licenroute-cli-0.3.3.tgz"
+npm install --save-dev --ignore-scripts "$B/licenroute-cli-0.3.4.tgz"
 npm install --ignore-scripts "$B/licenroute-connect-express-0.8.1.tgz"
 npm ls @licenroute/cli          # debe listar el paquete que acabas de instalar
 ```
