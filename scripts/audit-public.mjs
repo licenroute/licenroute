@@ -3,7 +3,8 @@
 //   node scripts/audit-public.mjs <dir> [--tarballs]
 // Checks: private code and internal names, real-format credentials and common secret formats, telemetry SDKs,
 // personal paths, unexpected files (symlinks, binaries, hidden files, setuid), package manifests, CI pinning and,
-// when a .git directory exists, the published history. A positive control proves every scanner still fires.
+// when a .git directory exists, the published history (linear; every commit audited). A positive control proves every
+// scanner still fires.
 import { execFileSync } from "node:child_process";
 import { existsSync, lstatSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -92,9 +93,18 @@ export function audit(dir) {
   }
   if (existsSync(join(dir, ".git"))) {
     const g = (...a) => execFileSync("git", ["-C", dir, ...a], { encoding: "utf8" }).trim();
-    const commits = g("rev-list", "--all", "--count");
-    if (commits !== "1") found.push(`.git: ${commits} commits; publish a single fresh commit`);
+    // A linear history whose every commit passes this same audit: each release is one more commit on top of the last,
+    // so a tag of an earlier release keeps pointing at what was published, and nothing private hides in an old tree.
+    const commits = g("rev-list", "--all").split("\n").filter(Boolean);
+    if (g("rev-list", "--all", "--merges")) found.push(".git: merge commits; publish a linear history");
     for (const id of new Set(g("log", "--all", "--format=%an <%ae>%n%cn <%ce>").split("\n"))) if (PRIVATE.some((n) => id.includes(n))) found.push(`.git: personal identity in history: ${id}`);
+    for (const c of commits.slice(1)) {
+      const t = mkdtempSync(join(tmpdir(), "licenroute-audit-commit-"));
+      try {
+        execFileSync("sh", ["-c", 'git -C "$1" archive "$2" | tar -x -C "$3"', "sh", dir, c, t]);
+        for (const f of audit(t)) found.push(`.git: commit ${c.slice(0, 7)}: ${f}`);
+      } finally { rmSync(t, { recursive: true, force: true }); }
+    }
     if (g("remote").length) found.push(".git: a remote is configured");
   }
   return found;

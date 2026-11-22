@@ -88,6 +88,8 @@ export function canonicalJson(value: unknown): string {
 
 const HEALTH = /^\/(?:health(?:z|check)?|healthcheck|up|ready|readiness|live|liveness|ping|status|metrics|_health)(?:\/|$)/i;
 const AUTH = /(?:^|\/)(?:login|logout|log-in|log-out|signin|sign-in|signout|sign-out|sign_in|sign_out|signup|sign-up|sign_up|register|registration|registrations|session|sessions|oauth2?|auth|authenticate|password|passwords|reset-password|forgot-password|token|tokens|verify-email|confirmation|confirmations|unlock|2fa|mfa|otp|saml|sso|openid|\.well-known)(?:\/|$)/i;
+/** BL-32: API documentation and specs (OpenAPI/Swagger, docs UIs) must stay public: agents and catalogues read them. */
+const DOCS = /(?:^|\/)(?:openapi|swagger)(?:\.(?:json|ya?ml))?$|(?:^|\/)(?:api-docs|swagger-ui|redoc|docs)(?:\/|$)/i;
 const WEBHOOK = /(?:^|\/)(?:webhooks?|hooks?|callbacks?|stripe|github-events|ipn|notify|notifications\/incoming)(?:\/|$)/i;
 const STATIC = /(?:^|\/)(?:assets|static|public|packs|images|img|css|js|fonts|uploads)(?:\/|$)|\.(?:css|js|map|png|jpe?g|gif|svg|ico|webp|woff2?|ttf|txt|xml|webmanifest)$|^\/(?:favicon\.ico|robots\.txt|sitemap\.xml|manifest\.json)$/i;
 const ADMIN = /(?:^|\/)(?:admin|administrator|backoffice|dashboard|internal|sidekiq|jobs|cable|rails\/|_debug|debug)(?:[/.]|$)/i;
@@ -97,6 +99,7 @@ const API = /(?:^|\/)(?:api|v\d+|graphql|rpc)(?:\/|$)/i;
 export function classify(path: string | null, method: string): Category {
   if (path === null) return "other";
   if (HEALTH.test(path)) return "health";
+  if (DOCS.test(path)) return "docs";
   if (WEBHOOK.test(path)) return "webhook";
   if (AUTH.test(path)) return "auth";
   if (STATIC.test(path)) return "static";

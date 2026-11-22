@@ -34,9 +34,9 @@
 
 - Node.js 24 or later (the CLI uses Node's permission model). The SDK itself supports Node 20+.
 - Validation status of this repository (`npm run validate:distribution`, Node.js 24):
-  - macOS on Apple silicon (arm64): passes with CLI 0.3.1.
-  - Ubuntu 24.04 x86_64 on a full virtual machine (not a container): passes with CLI 0.3.1.
-  - Ubuntu 24.04 arm64 in a container: passed with CLI 0.3.0; not repeated with 0.3.1.
+  - macOS on Apple silicon (arm64): passes with CLI 0.3.2.
+  - Ubuntu 24.04 x86_64 on a full virtual machine (not a container): passed with CLI 0.3.1; not repeated with 0.3.2.
+  - Ubuntu 24.04 arm64 in a container: passed with CLI 0.3.0; not repeated since.
   - x86_64 under emulation (Rosetta on Apple silicon): one internal test of Node's permission model fails. It does not
     fail on real x86_64.
   - Windows: not tested.

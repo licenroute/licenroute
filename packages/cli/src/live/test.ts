@@ -12,7 +12,7 @@
  */
 import type { Journal } from "../journal.ts";
 import { quotaHint } from "../sandbox-hint.ts";
-import { appUrl, errorOf, example, get, type Hit, loopbackUrl, planKey, type SafeMethod } from "./sandbox.ts";
+import { appUrl, errorOf, example as genericExample, get, type Hit, loopbackUrl, planKey, type SafeMethod } from "./sandbox.ts";
 import type { TestAdmin, Verification } from "./test-admin.ts";
 import { t } from "../../bin/i18n.mjs";
 
@@ -34,6 +34,10 @@ export type TestContext = Pick<Journal, "app" | "instance" | "public_checks"> & 
   /** methods vacío = todos (diario de 0.2.2, que escribió licensedPaths sin métodos). */
   plans: { key: string; pattern: string; methods: string[]; routes: { method: string; path: string }[] }[];
   auth_checks?: string[];
+  /** BL-33: real values for path parameters (`--example value=12345678Z`), used instead of the generic placeholder. */
+  examples?: Record<string, string>;
+  /** BL-34: plan routes that changed in the code since the integration was applied (the current ones are tested). */
+  route_changes?: { plan: string; added: string[]; removed: string[] }[];
   /** Rutas bajo un patrón con métodos que el plan NO incluye: no deben cobrarse (se preguntan, no se envían). */
   method_checks?: MethodCheck[];
   /** Rutas bajo un patrón SIN métodos con métodos que el plan no aprobó: se cobran sin que nadie lo decidiera. */
@@ -54,9 +58,17 @@ export function validTestContext(raw: unknown): TestContext | null {
   const declared = Array.isArray(c.declared) ? c.declared.filter((d) => d && typeof d.pattern === "string" && PATTERN.test(d.pattern)).slice(0, 50).map((d) => ({ pattern: d.pattern, methods: methodsOf(d.methods) })) : null;
   const public_checks = Array.isArray(c.public_checks) ? c.public_checks.filter((p): p is string => typeof p === "string" && PATH.test(p)).slice(0, 20) : [];
   const auth_checks = Array.isArray(c.auth_checks) ? c.auth_checks.filter((p): p is string => typeof p === "string" && PATH.test(p)).slice(0, 20) : [];
-  return { app: c.app, instance: c.instance, plans, public_checks, auth_checks, method_checks: checksOf(c.method_checks), overreach: checksOf(c.overreach), declared };
+  const examples: Record<string, string> = {};
+  if (c.examples && typeof c.examples === "object") for (const [k, v] of Object.entries(c.examples).slice(0, 20)) if (/^\w{1,40}$/.test(k) && typeof v === "string" && /^[A-Za-z0-9._~-]{1,64}$/.test(v)) examples[k] = v;
+  const pathsOf = (l: unknown) => (Array.isArray(l) ? l.filter((p): p is string => typeof p === "string" && PATH.test(p)).slice(0, 50) : []);
+  const route_changes = Array.isArray(c.route_changes) ? c.route_changes.filter((x) => x && typeof x.plan === "string" && PATTERN.test(x.plan)).slice(0, 20).map((x) => ({ plan: x.plan, added: pathsOf(x.added), removed: pathsOf(x.removed) })) : [];
+  return { app: c.app, instance: c.instance, plans, public_checks, auth_checks, method_checks: checksOf(c.method_checks), overreach: checksOf(c.overreach), declared, examples, route_changes };
 }
 
+/** BL-33: a probe path with the given example values for its parameters; the generic placeholder for the rest. */
+export const exampleWith = (path: string, given: Record<string, string> = {}) => genericExample(path.replace(/:(\w+)/g, (m, n: string) => given[n] ?? m));
+/** A route without parameters probes a plan best (no placeholder the app could reject); else the first route. */
+export const probePath = (routes: { path: string }[]) => (routes.find((r) => !/[:*({]/.test(r.path)) ?? routes[0]!).path;
 /** Respuesta de rechazo del PROPIO SDK de LicenRoute: uno de sus códigos y su request_id (una app no lleva los dos). */
 const LICENROUTE_CODES = new Set(["payment_required", "forbidden", "licensed_route_not_covered", "rate_limited", "service_unavailable"]);
 export function isLicenRouteDenial(h: Hit): boolean {
@@ -79,6 +91,12 @@ export async function runTests(opts: { app: string; instance: string; baseUrl: s
   const why = (r: { ok: false; error: { message: string } }) => firstLines(r.error.message);
   if (!journal) { add("integracion", false, t("test.no_integration")); return checks; }
   if (journal.app !== opts.app || journal.instance !== opts.instance) add("aviso", null, t("test.integration_for", { app: journal.app, instance: journal.instance }));
+  // BL-33: provided example values first, then the generic placeholder.
+  const given = journal.examples ?? {};
+  const example = (path: string) => exampleWith(path, given);
+  const probeOf = probePath;
+  // BL-34: the code changed after the integration was applied: say so; the current routes are the ones tested.
+  for (const rc of journal.route_changes ?? []) add(`rutas-cambiadas ${planKey(rc.plan)}`, null, t("test.routes_changed", { plan: rc.plan, added: rc.added.join(", ") || "-", removed: rc.removed.join(", ") || "-" }));
 
   // 0. Servicio de decisiones y sitio de la app.
   const status = await admin.siteStatus(opts.app);
@@ -101,7 +119,7 @@ export async function runTests(opts: { app: string; instance: string; baseUrl: s
   }
 
   // 1. La app responde.
-  const first = journal.plans[0]!; const firstPath = example(first.routes[0]!.path);
+  const first = journal.plans[0]!; const firstPath = example(probeOf(first.routes));
   const alive = await until(() => request(firstPath), (h) => h.status !== null, 30);
   if (alive.status === null) { add("app", false, t("test.app_down", { origin: base.origin })); return checks; }
 
@@ -130,7 +148,7 @@ export async function runTests(opts: { app: string; instance: string; baseUrl: s
   const forged = admin.forgedToken();
 
   for (const p of journal.plans) {
-    const key = planKey(p.pattern); const path = example(p.routes[0]!.path);
+    const key = planKey(p.pattern); const path = example(probeOf(p.routes));
     const valid = await token(key); const rev = await token(`${key}-revocable`); const quotaTok = await token(`${key}-cuota`);
     if (!valid || !rev || !quotaTok) { add(`${key}`, false, t("test.licences_missing", { p1: absent.splice(0).join(" | ") })); continue; }
     const head = p.methods.length === 0 || p.methods.includes("HEAD");
@@ -138,7 +156,8 @@ export async function runTests(opts: { app: string; instance: string; baseUrl: s
     for (const r of p.routes) { const h = await request(example(r.path)); add(`${key}:sin-licencia ${r.path}`, h.status === 402, show(h)); }
     if (head) { const h = await request(path, undefined, "HEAD"); add(`${key}:sin-licencia HEAD ${path}`, h.status === 402, show(h)); }
     const v = await until(() => request(path, valid), (h) => ok2xx(h) || (h.status !== 403 && h.status !== 503), 20);
-    add(`${key}:licencia-valida`, ok2xx(v), show(v));
+    // BL-33: the app (not LicenRoute) answered a non-2xx: the gate let the request through; the placeholder value was rejected.
+    add(`${key}:licencia-valida`, ok2xx(v), ok2xx(v) || v.status === null || isLicenRouteDenial(v) ? show(v) : `${show(v)} · ${t("test.app_answered_hint", { path })}`);
     if (head) { const h = await request(path, valid, "HEAD"); add(`${key}:licencia-valida HEAD`, ok2xx(h), show(h)); }
     // OPTIONS (p. ej. la petición previa de CORS) no lleva licencia: nunca debe rechazarla LicenRoute.
     if (p.methods.length > 0) { const h = await request(path, undefined, "OPTIONS"); add(`${key}:options-sin-cobro`, h.status !== null && !isLicenRouteDenial(h) && h.status !== 402, show(h)); }
@@ -196,7 +215,7 @@ export async function runTests(opts: { app: string; instance: string; baseUrl: s
       if (!tok) { untested.push(t("test.no_test_licence", { pattern: p.pattern })); add(`central-caido:${k}`, null, t("test.not_checked_no_licence")); continue; }
       const hits: [string, Hit][] = [];
       for (const r of p.routes) hits.push([r.path, await request(example(r.path), tok)]);
-      if (p.methods.length === 0 || p.methods.includes("HEAD")) hits.push([`HEAD ${p.routes[0]!.path}`, await request(example(p.routes[0]!.path), tok, "HEAD")]);
+      if (p.methods.length === 0 || p.methods.includes("HEAD")) hits.push([`HEAD ${probeOf(p.routes)}`, await request(example(probeOf(p.routes)), tok, "HEAD")]);
       add(`central-caido:${k}`, hits.every(([, h]) => h.status === 503), hits.map(([r, h]) => `${r} ${show(h)}`).join(" · "));
     }
     for (const pub of journal.public_checks) { const h = await request(example(pub)); add(`central-caido:publica ${pub}`, ok2xx(h), show(h)); }

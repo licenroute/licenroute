@@ -8,9 +8,10 @@ import { canonicalJson, isWildcardRoute, sha256, unplannablePath } from "./util.
 import { tc } from "../bin/i18n.mjs";
 
 // D4.4.2: la exclusión se decide por la categoría; el motivo es solo texto (se calcula al usarlo).
-const EXCLUDED_CATEGORIES = new Set(["health", "auth", "webhook", "static"]);
+const EXCLUDED_CATEGORIES = new Set(["health", "docs", "auth", "webhook", "static"]);
 const excludeReason = (category: string): string => ({
   health: () => tc("plan.exclude.health"),
+  docs: () => tc("plan.exclude.docs"),
   auth: () => tc("plan.exclude.auth"),
   webhook: () => tc("plan.exclude.webhook"),
   static: () => tc("plan.exclude.static"),

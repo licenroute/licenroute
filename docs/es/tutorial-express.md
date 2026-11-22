@@ -24,7 +24,7 @@ export LICENROUTE_LANG=es           # mensajes en español en el resto del tutor
 cp -R examples/express-demo /tmp/mi-api && cd /tmp/mi-api
 git init -q && git add -A && git commit -qm "antes de LicenRoute"     # para ver cada cambio que haga LicenRoute
 npm install --ignore-scripts
-npm install --save-dev --ignore-scripts "$B/licenroute-cli-0.3.1.tgz"
+npm install --save-dev --ignore-scripts "$B/licenroute-cli-0.3.2.tgz"
 npm install --ignore-scripts "$B/licenroute-connect-express-0.8.0.tgz"
 npm ls @licenroute/cli          # debe listar el paquete que acabas de instalar
 ```

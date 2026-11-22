@@ -21,7 +21,7 @@ reto de un solo uso en su propio terminal. `licenroute undo` lo revierte exactam
 
 | Ruta | Qué es |
 |---|---|
-| `packages/cli` | `@licenroute/cli` 0.3.1 — la orden `licenroute` (código TypeScript) |
+| `packages/cli` | `@licenroute/cli` 0.3.2 — la orden `licenroute` (código TypeScript) |
 | `sdks/node-express` | `@licenroute/connect-express` 0.8.0 — middleware para Express 4/5 (código TypeScript) |
 | `packages/simulator` | simulador local de decisiones para el modo demo (va dentro del paquete de la CLI) |
 | `packages/policy-contracts` | esquemas, comparación de rutas y JSON canónico que comparten el SDK y el simulador (incrustado) |
@@ -40,7 +40,7 @@ Requisitos: Node.js 24 o posterior con npm, git y (en Linux) `script` de util-li
 ```bash
 git clone https://github.com/licenroute/licenroute.git licenroute && cd licenroute
 npm ci --ignore-scripts          # dependencias de desarrollo del registro público de npm
-npm run build                    # dist-packages/licenroute-cli-0.3.1.tgz y licenroute-connect-express-0.8.0.tgz
+npm run build                    # dist-packages/licenroute-cli-0.3.2.tgz y licenroute-connect-express-0.8.0.tgz
 export LICENROUTE_LANG=es           # mensajes en español
 ./demo/demo.sh                   # solo lectura: copia la API de ejemplo y enseña los planes y el diff exacto
 ```
@@ -62,7 +62,7 @@ SIMULATED PASS: la integración responde como se espera contra el SIMULADOR. No 
 
 ```bash
 cd tu-api
-npm install --save-dev --ignore-scripts <licenroute>/dist-packages/licenroute-cli-0.3.1.tgz
+npm install --save-dev --ignore-scripts <licenroute>/dist-packages/licenroute-cli-0.3.2.tgz
 npm install --ignore-scripts <licenroute>/dist-packages/licenroute-connect-express-0.8.0.tgz
 npm ls @licenroute/cli                    # debe listar el paquete que acabas de instalar
 ./node_modules/.bin/licenroute init . --lang es                           # planes numerados; rutas que nunca tocará; rutas que decides tú

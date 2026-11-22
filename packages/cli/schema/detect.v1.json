@@ -313,6 +313,10 @@
               },
               {
                 "type": "string",
+                "const": "docs"
+              },
+              {
+                "type": "string",
                 "const": "auth"
               },
               {

@@ -12,7 +12,7 @@ export const Method = Type.Union([Type.Literal("GET"), Type.Literal("HEAD"), Typ
 export type Method = Static<typeof Method>;
 
 export const Category = Type.Union(
-  [Type.Literal("health"), Type.Literal("auth"), Type.Literal("webhook"), Type.Literal("static"), Type.Literal("admin"), Type.Literal("api"), Type.Literal("page"), Type.Literal("other")],
+  [Type.Literal("health"), Type.Literal("docs"), Type.Literal("auth"), Type.Literal("webhook"), Type.Literal("static"), Type.Literal("admin"), Type.Literal("api"), Type.Literal("page"), Type.Literal("other")],
   { description: "Clasificación heurística por ruta y contexto; nunca una garantía." },
 );
 export type Category = Static<typeof Category>;

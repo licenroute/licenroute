@@ -31,7 +31,7 @@ const pkgDir = (name) => {
   setLang(argv.includes("--json") ? "en" : r.lang);
 }
 const args = process.argv.slice(2);
-const VALUE_FLAGS = new Set(["--target", "--plans", "--plan-sha", "--app", "--instance", "--sdk", "--approve", "--resolve", "--base-url", "--env-file", "--phase", "--consent", "--self-hosted", "--quota", "--port", "--app-port", "--entry", "--lang"]);
+const VALUE_FLAGS = new Set(["--target", "--plans", "--plan-sha", "--app", "--instance", "--sdk", "--approve", "--resolve", "--base-url", "--env-file", "--phase", "--consent", "--self-hosted", "--quota", "--port", "--app-port", "--entry", "--lang", "--example"]);
 const DIR_COMMANDS = ["detect", "plan", "apply", "undo", "test", "doctor", "init", "env", "dev", "assistant"];
 const positional = []; const valueOf = {};
 for (let i = 0; i < args.length; i++) { if (VALUE_FLAGS.has(args[i])) { valueOf[args[i]] = args[i + 1]; i++; } else if (!args[i].startsWith("--")) positional.push(args[i]); }

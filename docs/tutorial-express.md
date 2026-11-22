@@ -23,7 +23,7 @@ B=$(pwd)/dist-packages
 cp -R examples/express-demo /tmp/my-api && cd /tmp/my-api
 git init -q && git add -A && git commit -qm "before LicenRoute"     # so you can see every change LicenRoute makes
 npm install --ignore-scripts
-npm install --save-dev --ignore-scripts "$B/licenroute-cli-0.3.1.tgz"
+npm install --save-dev --ignore-scripts "$B/licenroute-cli-0.3.2.tgz"
 npm install --ignore-scripts "$B/licenroute-connect-express-0.8.0.tgz"
 npm ls @licenroute/cli          # must list the package you just installed
 ```

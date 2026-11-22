@@ -198,7 +198,7 @@ export function prepareApply(req: ApplyRequest): Prepared {
   verifyAfter(detected, after, plan.target, selected, refusals, warnings);
   if (refusals.length) return out({ plan, selected, changes });
 
-  const publicChecks = [...new Set(detected.routes.filter((r) => r.framework === plan.target && r.method === "GET" && r.path && r.resolution === "static" && (r.category === "health" || r.path === "/") && !patterns.some((p) => covers(p, r.path!))).map((r) => r.path!))];
+  const publicChecks = [...new Set(detected.routes.filter((r) => r.framework === plan.target && r.method === "GET" && r.path && r.resolution === "static" && (r.category === "health" || r.category === "docs" || r.path === "/") && !patterns.some((p) => covers(p, r.path!))).map((r) => r.path!))];
   const approvalCode = `apr_${sha256(canonicalJson({ plan_sha256: plan.approval.plan_sha256, plans: [...req.planKeys].sort(), patterns, methods: selected.map((s) => s.methods), app: req.app, instance: req.instance, sdk: sdkSpec, changes: changes.map((c) => ({ path: c.path, action: c.action, before: c.beforeSha, after: c.afterSha })) })).slice(0, 20)}`;
   return { ok: true, refusals, warnings, plan, selected, changes, approvalCode, publicChecks, sdkSpec, uncovered };
 }

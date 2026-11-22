@@ -31,10 +31,11 @@ function insecureTestReady(): boolean {
 const consentText = (c: Consent) => t(c === "tty-challenge" ? "consent.tty" : "consent.insecure");
 import { plan, PlanError } from "./plan.ts";
 import { renderDetect, renderPlan } from "./render.ts";
+import { refreshPlanRoutes } from "./route-refresh.ts";
 
 const usage = () => t("cli.usage");
 
-const VALUE_FLAGS = new Set(["--target", "--plans", "--plan-sha", "--app", "--instance", "--sdk", "--approve", "--resolve", "--base-url", "--env-file", "--phase", "--consent", "--self-hosted", "--quota", "--port", "--app-port", "--entry", "--lang"]);
+const VALUE_FLAGS = new Set(["--target", "--plans", "--plan-sha", "--app", "--instance", "--sdk", "--approve", "--resolve", "--base-url", "--env-file", "--phase", "--consent", "--self-hosted", "--quota", "--port", "--app-port", "--entry", "--lang", "--example"]);
 const BOOL_FLAGS = new Set(["--write", "--demo", "--cloud", "--claude-code", "--cursor", "--start-app", "--status", "--stop"]);
 const COMMANDS = ["detect", "plan", "apply", "undo", "test", "doctor", "init", "env", "dev", "connect", "assistant"];
 
@@ -232,7 +233,15 @@ export async function run(argv: string[]): Promise<number> {
       if (!j) return null;
       const d = detect(a.dir);
       const routes = d.routes.filter((r) => r.path !== null && r.resolution === "static");
-      const plans = j.plans.map((p) => ({ ...p, methods: Array.isArray(p.methods) ? p.methods : [] }));
+      // BL-34: test the routes the code has NOW under each approved pattern and methods; say what changed since apply.
+      const refreshed = refreshPlanRoutes(j.plans.map((p) => ({ ...p, methods: Array.isArray(p.methods) ? p.methods : [] })), routes.map((r) => ({ method: r.method, path: r.path! })), covers);
+      const plans = refreshed.plans; const route_changes = refreshed.changes;
+      // BL-32: public routes the code has now (health, docs, home) that no plan covers, plus those recorded at apply time.
+      const publicNow = routes.filter((r) => r.method === "GET" && (r.category === "health" || r.category === "docs" || r.path === "/") && !plans.some((p) => covers(p.pattern, r.path!))).map((r) => r.path!);
+      const public_checks = [...new Set([...(j.public_checks ?? []), ...publicNow])];
+      // BL-33: --example name=value (repeatable): real values for path parameters.
+      const examples: Record<string, string> = {};
+      for (const raw of a.values.get("--example") ?? []) { const m = /^(\w{1,40})=([A-Za-z0-9._~-]{1,64})$/.exec(raw); if (m) examples[m[1]!] = m[2]!; }
       const method_checks: { method: string; path: string; plan: string; auth: string[] }[] = []; const overreach: typeof method_checks = [];
       for (const p of plans) {
         const own = new Set(p.routes.map((r) => `${r.method} ${r.path}`));
@@ -243,7 +252,7 @@ export async function run(argv: string[]): Promise<number> {
         }
       }
       return {
-        app: j.app, instance: j.instance, plans, public_checks: j.public_checks,
+        app: j.app, instance: j.instance, plans, public_checks, examples, route_changes,
         auth_checks: routes.filter((r) => r.method === "GET" && r.signals.auth_middleware.length > 0).map((r) => r.path!).slice(0, 20),
         method_checks: method_checks.slice(0, 20), overreach: overreach.slice(0, 20), declared: d.licenroute.licensed_routes ?? null,
       };
