@@ -21,8 +21,8 @@ types a one-time challenge in their own terminal. `licenroute undo` reverts it e
 
 | Path | What it is |
 |---|---|
-| `packages/cli` | `@licenroute/cli` 0.3.2 — the `licenroute` command (TypeScript source) |
-| `sdks/node-express` | `@licenroute/connect-express` 0.8.0 — Express 4/5 middleware (TypeScript source) |
+| `packages/cli` | `@licenroute/cli` 0.3.3 — the `licenroute` command (TypeScript source) |
+| `sdks/node-express` | `@licenroute/connect-express` 0.8.1 — Express 4/5 middleware (TypeScript source) |
 | `packages/simulator` | local decision simulator for demo mode (bundled into the CLI package) |
 | `packages/policy-contracts` | schemas, route matching and canonical JSON shared by the SDK and the simulator (bundled) |
 | `integrations/assistants` | Claude Code Skill + approval hook, and Cursor rules + hook |
@@ -40,7 +40,7 @@ Requirements: Node.js 24 or later with npm, git, and (Linux) `script` from util-
 ```bash
 git clone https://github.com/licenroute/licenroute.git licenroute && cd licenroute
 npm ci --ignore-scripts          # dev dependencies from the public npm registry
-npm run build                    # dist-packages/licenroute-cli-0.3.2.tgz and licenroute-connect-express-0.8.0.tgz
+npm run build                    # dist-packages/licenroute-cli-0.3.3.tgz and licenroute-connect-express-0.8.1.tgz
 ./demo/demo.sh                   # read-only: copies the example API, shows the plans and the exact diff
 ```
 
@@ -66,8 +66,9 @@ service down). They are the same in every language ([docs/i18n.md](docs/i18n.md)
 
 ```bash
 cd your-api
-npm install --save-dev --ignore-scripts <licenroute>/dist-packages/licenroute-cli-0.3.2.tgz
-npm install --ignore-scripts <licenroute>/dist-packages/licenroute-connect-express-0.8.0.tgz
+npm install --save-dev --ignore-scripts @licenroute/cli@0.3.3      # from npm (scoped name only)
+npm install --ignore-scripts @licenroute/connect-express@0.8.1
+# or the packages you built and verified yourself: <licenroute>/dist-packages/licenroute-cli-0.3.3.tgz and …-connect-express-0.8.1.tgz
 npm ls @licenroute/cli                    # must list the package you just installed
 ./node_modules/.bin/licenroute init .                      # numbered plans; routes it will never touch; routes left to you
 ./node_modules/.bin/licenroute init . --plans 1 --app your-api          # full diff preview, writes nothing
@@ -118,7 +119,7 @@ for it on your terminal, and it proves that someone typed it there, not who. Det
 - Not reviewed for production traffic or real credentials; no security audit yet.
 - Rails is out of scope: `licenroute detect` and `licenroute plan` can analyse a Rails app read-only, but `init` and `apply` refuse to write an integration (the Rails SDK is not part of this repository).
 - Platforms: see [docs/limitations.md](docs/limitations.md#platforms-and-languages). Windows is not tested.
-- Package names under `@licenroute` are provisional and **not published** on npm.
+- The packages are published on npm as `@licenroute/cli` and `@licenroute/connect-express` (CLI 0.3.3 and SDK 0.8.1 onwards). Only the scoped names are LicenRoute.
 
 Full list: [docs/limitations.md](docs/limitations.md).
 

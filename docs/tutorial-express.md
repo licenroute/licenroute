@@ -23,8 +23,8 @@ B=$(pwd)/dist-packages
 cp -R examples/express-demo /tmp/my-api && cd /tmp/my-api
 git init -q && git add -A && git commit -qm "before LicenRoute"     # so you can see every change LicenRoute makes
 npm install --ignore-scripts
-npm install --save-dev --ignore-scripts "$B/licenroute-cli-0.3.2.tgz"
-npm install --ignore-scripts "$B/licenroute-connect-express-0.8.0.tgz"
+npm install --save-dev --ignore-scripts "$B/licenroute-cli-0.3.3.tgz"
+npm install --ignore-scripts "$B/licenroute-connect-express-0.8.1.tgz"
 npm ls @licenroute/cli          # must list the package you just installed
 ```
 
@@ -42,7 +42,7 @@ package (anyone may publish under it), and `npx` downloads and runs a package th
 
 ```text
 LicenRoute init — express 5.3.0 · app "demo-express" (change it with --app)
-  SDK: declared in package.json (file:…/licenroute-connect-express-0.8.0.tgz)
+  SDK: declared in package.json (file:…/licenroute-connect-express-0.8.1.tgz)
 
 Proposed plans (choose with --plans 1,2 or by name):
    1  api-catalogo             /api/catalogo/**             GET /api/catalogo

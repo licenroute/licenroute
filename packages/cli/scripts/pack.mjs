@@ -80,13 +80,20 @@ cpSync(join(repoRoot, "node_modules/typebox/license"), join(stage, "licenses/typ
 
 const readme = `# ${pkg.name} ${pkg.version} (built)
 
-LicenRoute CLI, developer preview. **Not published.** Demo mode only: it integrates LicenRoute into an Express API and tests
-it against a local simulator with synthetic credentials. It does not include LicenRoute Central and does not charge,
-protect or meter anything real. Messages in English (default) or Spanish: \`--lang en|es\` or \`LICENROUTE_LANG\`; \`--json\`
+LicenRoute CLI, developer preview. It integrates LicenRoute into an Express API and tests it against a local simulator
+with synthetic credentials. To charge for real routes, connect the app to the hosted pilot (https://app.licenroute.com);
+payments there stay in Stripe test mode for now. Messages in English (default) or Spanish: \`--lang en|es\` or \`LICENROUTE_LANG\`; \`--json\`
 output is always English.
 
 Requires Node 24 or later. The TypeScript compiler is bundled in \`dist/main.cjs\` only to read (never run) the code of
 the analysed app.
+
+Install it in your project as a development dependency (scoped name only):
+
+\`\`\`bash
+npm install --save-dev --ignore-scripts ${pkg.name}
+npm ls ${pkg.name}                               # must list the package you just installed
+\`\`\`
 
 Run it from the project where it is installed as a development dependency, never through \`npx licenroute\`: on npm the
 unscoped name \`licenroute\` is not this package (anyone may publish under it), and \`npx\` downloads a missing package.
@@ -105,9 +112,12 @@ writeFileSync(join(stage, "README.md"), readme);
 writeFileSync(join(stage, "package.json"), `${JSON.stringify({
   name: pkg.name,
   version: pkg.version,
-  private: true,
-  description: "LicenRoute CLI (developer preview, demo mode): plan, approve, apply and undo licensing and quotas for an Express API; local simulator included. Not published.",
+  description: "LicenRoute CLI (developer preview): plan, approve, apply and undo licence keys and quotas for an Express API, with a human approval step; local simulator included.",
   license: "Apache-2.0",
+  repository: { type: "git", url: "git+https://github.com/licenroute/licenroute.git", directory: "packages/cli" },
+  homepage: "https://licenroute.com",
+  bugs: { url: "https://github.com/licenroute/licenroute/issues" },
+  author: "LicenRoute",
   keywords: ["express", "api", "license-keys", "quota", "middleware", "claude-code", "cursor"],
   type: "module",
   bin: { licenroute: "./bin/licenroute.mjs", "licenroute-simulator": "./bin/licenroute-simulator.mjs" },

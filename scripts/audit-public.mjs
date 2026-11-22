@@ -79,7 +79,10 @@ export function audit(dir) {
     if (!rel.endsWith("THIRD_PARTY_LICENSES.md")) for (const n of TELEMETRY) if (text.toLowerCase().includes(n) && !allowed("*")) found.push(`${rel}: telemetry SDK «${n}»`);
     if (/(?:^|\/)package\.json$/.test(rel) && !/(?:^|\/)test\/fixtures\//.test(rel) && !rel.startsWith("examples/")) {
       const pkg = JSON.parse(text);
-      if (pkg.private !== true) found.push(`${rel}: "private": true is required until publication is authorised`);
+      // npm phase (0.8.1): only the SDK may be publishable, and only pointing at the official repository.
+      const publishable = rel === "sdks/node-express/package.json";
+      if (pkg.private !== true && !publishable) found.push(`${rel}: "private": true is required until publication is authorised`);
+      if (publishable && pkg.private !== true && pkg.repository?.url !== "git+https://github.com/licenroute/licenroute.git") found.push(`${rel}: a publishable package must point at the official repository`);
       if (pkg.license !== "Apache-2.0") found.push(`${rel}: license must be Apache-2.0`);
       for (const k of ["preinstall", "install", "postinstall", "prepare", "prepublish", "prepublishOnly"]) if (pkg.scripts?.[k]) found.push(`${rel}: lifecycle script «${k}»`);
     }

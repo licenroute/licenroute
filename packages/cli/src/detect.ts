@@ -8,7 +8,7 @@ import type { DetectResult, Framework } from "./schema.ts";
 import { sanitize } from "./util.ts";
 import { tc } from "../bin/i18n.mjs";
 
-export const TOOL_VERSION = "0.3.2";
+export const TOOL_VERSION = "0.3.3";
 const TOOL = { name: "@licenroute/cli" as const, version: TOOL_VERSION };
 
 const major = (v: string | null): number | null => {

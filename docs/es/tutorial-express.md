@@ -24,8 +24,8 @@ export LICENROUTE_LANG=es           # mensajes en español en el resto del tutor
 cp -R examples/express-demo /tmp/mi-api && cd /tmp/mi-api
 git init -q && git add -A && git commit -qm "antes de LicenRoute"     # para ver cada cambio que haga LicenRoute
 npm install --ignore-scripts
-npm install --save-dev --ignore-scripts "$B/licenroute-cli-0.3.2.tgz"
-npm install --ignore-scripts "$B/licenroute-connect-express-0.8.0.tgz"
+npm install --save-dev --ignore-scripts "$B/licenroute-cli-0.3.3.tgz"
+npm install --ignore-scripts "$B/licenroute-connect-express-0.8.1.tgz"
 npm ls @licenroute/cli          # debe listar el paquete que acabas de instalar
 ```
 
@@ -43,7 +43,7 @@ este paquete (cualquiera puede publicar con él), y `npx` descarga y ejecuta un 
 
 ```text
 LicenRoute init — express 5.3.0 · app «demo-express» (cámbiala con --app)
-  SDK: declarado en package.json (file:…/licenroute-connect-express-0.8.0.tgz)
+  SDK: declarado en package.json (file:…/licenroute-connect-express-0.8.1.tgz)
 
 Planes propuestos (elige con --plans 1,2 o por nombre):
    1  api-catalogo             /api/catalogo/**             GET /api/catalogo

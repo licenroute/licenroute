@@ -36,8 +36,8 @@
 
 - Node.js 24 o posterior (la CLI usa el modelo de permisos de Node). El SDK por sí solo admite Node 20+.
 - Estado de la validación de este repositorio (`npm run validate:distribution`, Node.js 24):
-  - macOS en Apple silicon (arm64): pasa con la CLI 0.3.2.
-  - Ubuntu 24.04 x86_64 en una máquina virtual completa (no un contenedor): pasó con la CLI 0.3.1; no se ha repetido con la 0.3.2.
+  - macOS en Apple silicon (arm64): pasa con la CLI 0.3.3.
+  - Ubuntu 24.04 x86_64 en una máquina virtual completa (no un contenedor): pasó con la CLI 0.3.1; no se ha repetido con la 0.3.2 ni la 0.3.3.
   - Ubuntu 24.04 arm64 en un contenedor: pasó con la CLI 0.3.0; no se ha repetido después.
   - x86_64 emulado (Rosetta en Apple silicon): falla una prueba interna del modelo de permisos de Node. En x86_64 real
     no falla.
@@ -52,5 +52,5 @@
 
 ## Nombres
 
-`@licenroute/cli` y `@licenroute/connect-express` son nombres provisionales. No están publicados en npm y pueden cambiar
-antes de cualquier versión.
+`@licenroute/cli` y `@licenroute/connect-express` están publicados en npm (desde la CLI 0.3.3 y el SDK 0.8.1). El nombre sin
+ámbito `licenroute` en npm no es este proyecto.

@@ -2,7 +2,7 @@
 // Builds the two installable packages from source into dist-packages/, with SHA256SUMS. Publishes nothing.
 //   node scripts/build-packages.mjs
 //   dist-packages/<scope>-cli-<version>.tgz              CLI + bundled simulator, Skill and Cursor rules
-//   dist-packages/<scope>-connect-express-<version>.tgz  Express SDK (runtime dependency: typebox)
+//   dist-packages/<scope>-connect-express-<version>.tgz  Express SDK, ESM and CommonJS (no runtime dependencies)
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { cpSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";

@@ -7,7 +7,7 @@ Generated from package-lock.json by the repository build (193 packages). All are
 Redistributed inside built packages:
 
 - **typescript@6.0.3** (Apache-2.0): bundled in the CLI (dist/main.cjs)
-- **typebox@1.3.36** (MIT): bundled in the CLI (dist/main.cjs, dist/simulator.cjs); runtime dependency of the SDK
+- **typebox@1.3.36** (MIT): bundled in the CLI (dist/main.cjs, dist/simulator.cjs) and in the SDK (dist/index.js, dist/cjs/index.js); its license ships in both tarballs
 
 Everything else is installed from the public npm registry for development, tests or the example app and is not redistributed.
 

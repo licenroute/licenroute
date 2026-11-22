@@ -96,8 +96,13 @@ try {
   const sdkPkg = JSON.parse(spawnSync("tar", ["-xOzf", sdkTgz, "package/package.json"], { encoding: "utf8" }).stdout);
   const sdkFiles = list(sdkTgz);
   const licensed = cliPkg.license === "Apache-2.0" && sdkPkg.license === "Apache-2.0" && ["package/LICENSE", "package/NOTICE", "package/licenses/typebox-MIT.txt", "package/licenses/typescript-Apache-2.0.txt"].every((f) => cliFiles.includes(f)) && ["package/LICENSE", "package/NOTICE"].every((f) => sdkFiles.includes(f));
-  if (!stray.length && !cliPkg.dependencies && JSON.stringify(Object.keys(sdkPkg.dependencies ?? {})) === '["typebox"]' && cliFiles.includes("package/bin/dev-command.mjs") && cliFiles.some((f) => f.endsWith("SKILL.md")) && licensed && cliPkg.private === true && sdkPkg.private === true) ok(`packages: CLI ${cliPkg.version} with ${cliFiles.length} files, no dependencies (simulator, dev and Skill inside); SDK ${sdkPkg.version} depends only on typebox; Apache-2.0 with LICENSE, NOTICE and bundled third-party licences; both private (not publishable by accident)`);
-  else ko(`packages: extra ${stray.join(", ") || "-"} · CLI deps ${JSON.stringify(cliPkg.dependencies)} · licences ${licensed} · private ${cliPkg.private}/${sdkPkg.private}`);
+  // npm phase (CLI 0.3.3, SDK 0.8.1): both publishable and pointing at the official repository; the SDK has no runtime
+  // dependencies (typebox bundled, its licence inside) and ships ESM (import) and CommonJS (require) entry points.
+  const official = (p) => p.private !== true && p.repository?.url === "git+https://github.com/licenroute/licenroute.git" && p.homepage === "https://licenroute.com";
+  const dual = sdkPkg.exports?.["."]?.import?.default === "./dist/index.js" && sdkPkg.exports?.["."]?.require?.default === "./dist/cjs/index.js"
+    && ["package/dist/index.js", "package/dist/cjs/index.js", "package/dist/cjs/package.json", "package/dist/licenses/typebox-MIT.txt"].every((f) => sdkFiles.includes(f));
+  if (!stray.length && !cliPkg.dependencies && Object.keys(sdkPkg.dependencies ?? {}).length === 0 && dual && cliFiles.includes("package/bin/dev-command.mjs") && cliFiles.some((f) => f.endsWith("SKILL.md")) && licensed && official(cliPkg) && official(sdkPkg)) ok(`packages: CLI ${cliPkg.version} with ${cliFiles.length} files, no dependencies (simulator, dev and Skill inside); SDK ${sdkPkg.version} with no dependencies, ESM and CommonJS, typebox licence inside; Apache-2.0 with LICENSE, NOTICE and bundled third-party licences; both publishable, pointing at the official repository`);
+  else ko(`packages: extra ${stray.join(", ") || "-"} · CLI deps ${JSON.stringify(cliPkg.dependencies)} · SDK deps ${JSON.stringify(sdkPkg.dependencies)} · dual ${dual} · licences ${licensed} · official ${official(cliPkg)}/${official(sdkPkg)}`);
 
   // 1b. The Skill and Cursor rules inside the CLI package are byte-identical to integrations/assistants/generated/.
   {

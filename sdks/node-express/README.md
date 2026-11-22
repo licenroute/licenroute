@@ -1,8 +1,16 @@
 # @licenroute/connect-express — developer preview
 
-> **Status: developer preview, demo mode only. Not published to npm.** In this repository the SDK talks to the local
-> LicenRoute simulator, with synthetic credentials. The hosted LicenRoute service (Central) is not available and is not part
-> of this repository. Nothing here charges money or processes real payments.
+> **Status: developer preview.** In this repository the SDK talks to the local LicenRoute simulator, with synthetic
+> credentials. A hosted pilot of the decision service is online (https://app.licenroute.com); it is not part of this
+> repository, and its payments stay in Stripe test mode, so nothing here charges real money.
+
+## Install
+
+```bash
+npm install --ignore-scripts @licenroute/connect-express
+```
+
+No runtime dependencies. It works with `import` (ESM) and with `require()` (CommonJS) on Node 20 or later.
 
 Express 4/5 (and Connect-compatible) middleware. Before your route runs, it asks a LicenRoute decision endpoint what to do
 and applies the answer: continue, `402` (licence required), `403` (licence revoked or invented), `429` (over quota,
@@ -26,6 +34,13 @@ app.use(licenroute({
   licensedPaths: [{ path: "/api/informes/**", methods: ["GET", "HEAD"] }],
   withoutPolicy: "deny",
 }));
+```
+
+The same in a CommonJS app:
+
+```js
+const express = require("express");
+const { licenroute } = require("@licenroute/connect-express");
 ```
 
 ## Key behaviour

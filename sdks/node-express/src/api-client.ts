@@ -2,7 +2,7 @@ import { DEMO_MODE_HEADER, DEMO_MODE_VALUE, DEMO_REASON_CODE, type DecisionReque
 import { m } from "./messages.ts";
 
 const ACTIONS = new Set(["allow", "block", "rate_limit", "challenge", "payment_required"]);
-export const SDK_VERSION = "0.8.0";
+export const SDK_VERSION = "0.8.1";
 export const SDK_USER_AGENT = `licenroute-connect-express/${SDK_VERSION}`;
 
 export interface Decision {
